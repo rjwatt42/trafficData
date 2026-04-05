@@ -45,7 +45,7 @@ plotSpeeds<-function(input,data,fixedLimits=NA) {
   }
   }
   
-  g<-addG(g,dataLine(data.frame(x=xlim,y=c(0,0)),colour="grey"))
+  g<-addG(g,dataLine(data.frame(x=xlim,y=c(0,0)),colour="grey",linewidth=1.5))
   
   g<-addG(g,dataText(data.frame(x=max(xlim),y=max(ylim)*0.6),label="← Westwards ←",hjust = 1,vjust=1))
   g<-addG(g,dataText(data.frame(x=max(xlim),y=min(ylim)*0.6),label="→ Eastwards →",hjust = 1,vjust=0))

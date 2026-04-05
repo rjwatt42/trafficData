@@ -103,7 +103,7 @@ plotTimes<-function(input,data,volume=FALSE,filter="none") {
     }
   }
 
-  g<-addG(g,dataLine(data.frame(x=xlim,y=c(0,0)),colour="grey"))
+  g<-addG(g,dataLine(data.frame(x=xlim,y=c(0,0)),colour="grey",linewidth=1.5))
   # g<-addG(g,dataPath(data.frame(x=0:23,y=means[1,]),colour="white"))
   # g<-addG(g,dataPath(data.frame(x=0:23,y=-means[2,]),colour="white"))
   g<-addG(g,dataText(data.frame(x=max(xlim),y=max(ylim)*0.8),label="← Westwards ←",hjust = 1,vjust=1))

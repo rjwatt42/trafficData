@@ -102,7 +102,7 @@ plotDays<-function(input,data,volume=FALSE,filter="none") {
     }
   }
 
-  g<-addG(g,dataLine(data.frame(x=xlim,y=c(0,0)),colour="grey"))
+  g<-addG(g,dataLine(data.frame(x=xlim,y=c(0,0)),colour="grey",linewidth=1.5))
   
   g<-addG(g,dataText(data.frame(x=max(xlim),y=max(ylim)*0.8),label="← Westwards ←",hjust = 1,vjust=1))
   g<-addG(g,dataText(data.frame(x=min(xlim),y=min(ylim)*0.8),label="→ Eastwards →",hjust = 0,vjust=0))
