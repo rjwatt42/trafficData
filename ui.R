@@ -76,15 +76,23 @@ ui <- fluidPage(
       style = paste("background: ",'#fff',';width:240px;height:350px',";margin-left: 0px;margin-right: -21px;margin-top: 10px;padding-right: -21px;border-color:#fff;border-radius:0px;"),
       # Input: 
       verticalLayout(
-        wellPanel(tags$div(style="margin-top:0px;font-weight:bold;","General traits"),
+        wellPanel(tags$div(style="margin-top:0px;font-weight:bold;","Select"),
                   tags$table(width="100%",class="MyTable",
                              tags$tr(
+                               tags$td(width = "70%", tags$div(style=localStyle,'site:')),
+                               tags$td(width = "50%", selectInput("whichSite", NULL,format(1:9),selected = "1",selectize=FALSE))
+                             ),
+                             tags$tr(
                                tags$td(width = "70%", tags$div(style=localStyle,'day:')),
-                               tags$td(width = "50%", selectInput("whichDay", NULL,c("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","All"),selected = "Sunday",selectize=FALSE))
+                               tags$td(width = "50%", selectInput("whichDay", NULL,c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday","All"),selected = "Monday",selectize=FALSE))
                              ),
                              tags$tr(
                                tags$td(width = "70%", tags$div(style=localStyle,'direction:')),
-                               tags$td(width = "50%", selectInput("whichDirection", NULL,c("Eastbound","Westbound","Both"),selected = "Both",selectize=FALSE))
+                               tags$td(width = "50%", selectInput("whichDirection", NULL,c("Eastbound","Westbound","Both"),selected = "Eastbound",selectize=FALSE))
+                             ),
+                             tags$tr(
+                               tags$td(width = "70%", tags$div(style=localStyle,'time:')),
+                               tags$td(width = "50%", selectInput("whichTime", NULL,0:23,selected = 9,selectize=FALSE))
                              )
                   )
         ),
@@ -111,7 +119,7 @@ ui <- fluidPage(
       style = paste("background: ",'#FFF',';','width:526px;height:500px;',"margin: 0px;margin-top:10px;margin-left:60px;padding: 0px;border-radius:0px;"),
       
       # Output: 
-      htmlOutput(outputId = "spectrumHTML",width="450px",height="3500px",border="0px",margin="0px"),
+      htmlOutput(outputId = "trafficHTML",width="450px",height="3500px",border="0px",margin="0px"),
       width=5
     )
   )

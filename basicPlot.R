@@ -356,7 +356,7 @@ startPlot<-function(xlim=c(0,1),ylim=c(0,1),gaps=NULL,box="both",top=0,
   labelGapy<-labelGapy*braw.env$plotArea[3]
   
   if (!is.null(xticks)) {
-    if (is.null(xticks$breaks))
+    if ((is.character(xticks) && xticks[1]=="auto") || is.null(xticks$breaks))
       xticks$breaks<-axisTicks(usr=xlim, log=xticks$logScale, axp = NULL, nint = 5)
     if (is.null(xticks$labels))
       xticks$labels<-as.character(xticks$breaks)
@@ -366,7 +366,7 @@ startPlot<-function(xlim=c(0,1),ylim=c(0,1),gaps=NULL,box="both",top=0,
   }
 
   if (!is.null(yticks)) {
-    if (is.null(yticks$breaks))
+    if ((is.character(yticks) && yticks[1]=="auto") ||is.null(yticks$breaks))
       yticks$breaks<-axisTicks(usr=ylim, log=yticks$logScale, axp = NULL, nint = 5)
     if (is.null(yticks$labels))
       yticks$labels<-as.character(yticks$breaks)
