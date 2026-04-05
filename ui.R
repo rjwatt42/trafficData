@@ -5,6 +5,7 @@ refrefStyle=paste0("margin-left:40px;")
 colourChoices=list("black","white","red","green","blue","yellow")
 
 ui <- fluidPage(
+  shinyjs::useShinyjs(),
   
   tags$head(
     tags$style(HTML( # labels 
@@ -57,7 +58,7 @@ ui <- fluidPage(
                   tags$table(width="100%",class="MyTable",
                              tags$tr(
                                tags$td(width = "70%", tags$div(style=localStyle,'site:')),
-                               tags$td(width = "50%", selectInput("whichSite", NULL,c("All",format(1:9)),selected = "1",selectize=FALSE))
+                               tags$td(width = "50%", selectInput("whichSite", NULL,c(format(1:9)),selected = "1",selectize=FALSE))
                              ),
                              tags$tr(
                                tags$td(width = "70%", tags$div(style=localStyle,'day:')),
@@ -70,6 +71,18 @@ ui <- fluidPage(
                              tags$tr(
                                tags$td(width = "70%", tags$div(style=localStyle,'time:')),
                                tags$td(width = "50%", selectInput("whichTime", NULL,c(paste0(format(0:23),".00"),"Average"),selected = " 9.00",selectize=FALSE))
+                             )
+                  )
+        ),
+        wellPanel(tags$div(style="font-weight:bold;",'Display'),
+                  tags$table(width="100%",
+                             tags$tr(
+                               tags$td(width = "70%", tags$div(style=localStyle,'graph type:')),
+                               tags$td(width = "50%", selectInput("plotType", NULL,c("single","f(sites)","f(days)","f(times)"), selected="single",selectize=FALSE))
+                             ),
+                             tags$tr(
+                               tags$td(width = "70%", tags$div(style=localStyle,'filter:')),
+                               tags$td(width = "50%", selectInput("filter", NULL,c("none","orange","red"), selected="none",selectize=FALSE))
                              ),
                              tags$tr(
                                tags$td(width = "70%", tags$div(style=localStyle,'graph limits:')),
@@ -83,7 +96,7 @@ ui <- fluidPage(
                                tags$td(tags$div('  ')),
                                tags$td(
                                  tags$div(HTML('Code is <a href="https://github.com/rjwatt42/trafficData"><u>here</u></a>'))),
-                               ),
+                             ),
                              tags$tr(
                                tags$td(tags$div('  ')),
                                tags$td(

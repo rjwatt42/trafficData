@@ -8,8 +8,6 @@ getSpeeds<-function(input,values) {
   speeds<-seq(5,60,5)
   speeds[1]<-0
   
-  direction<-which(input$whichDirection==c("Eastbound","Westbound","Both"))
-  
   allcounts<-c()
   for (direction in 1:2) {
     columnoff<-(direction-1)*31
@@ -25,6 +23,7 @@ getSpeeds<-function(input,values) {
     }
     allcounts<-rbind(allcounts,counts)
   }
+  allcounts<-allcounts/length(day)/length(time)
   
   return(list(speeds=speeds,counts=allcounts))
 }

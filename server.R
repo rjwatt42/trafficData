@@ -6,17 +6,27 @@ source('getData.R')
 source('getSpeeds.R')
 source('plotSpeeds.R')
 source('plotSites.R')
+source('plotDays.R')
+source('plotTimes.R')
 
 library('ggplot2')
 library('readxl')
+library('shinyjs')
 
 # data<-NULL
+openTab<-1
+startTab<-0
 
 server <- function(input, output) {
   BrawOpts(graphicsType = "HTML")
   
-  if (!exists("maintrafficdata"))
-  {
+  openTab<<-1
+  observeEvent({c(input$filter)}, { 
+    if (startTab>0) openTab<<-2 
+    startTab<<-1
+    })
+  
+  if (!exists("maintrafficdata")) {
   # maindata<<-readRDS("temp.rds")
     withProgress(message = 'Loading data', value = 0, {
       data<-list()
@@ -31,22 +41,37 @@ server <- function(input, output) {
     maintrafficdata<<-data
     saveRDS(maintrafficdata,"maindata.rds")
   }
-
-  observeEvent({c(input$whichSite,input$whichDay,input$whichDirection,input$whichTime,input$whichPlot)
+  
+  
+  observeEvent({c(input$whichSite,input$whichDay,input$whichTime,
+                  input$plotType,input$filter)
     }, 
     {
-      plotType<-"speeds"
-      if (input$whichSite=="All") plotType<-"sites"
-      switch(plotType,
-             "speeds"={g1<-plotSpeeds(input,maintrafficdata)},
-             "sites" ={g1<-plotSites(input,maintrafficdata)}
+      if (input$plotType=="f(sites)") shinyjs::disable("whichSite")
+      else shinyjs::enable("whichSite")
+      if (input$plotType=="f(days)") shinyjs::disable("whichDay")
+      else shinyjs::enable("whichDay")
+      if (input$plotType=="f(times)") shinyjs::disable("whichTime")
+      else shinyjs::enable("whichTime")
+      
+      switch(input$plotType,
+             "single"   ={g1<-plotSpeeds(input,maintrafficdata)},
+             "f(sites)" ={g1<-plotSites(input,maintrafficdata)},
+             "f(days)"  ={g1<-plotDays(input,maintrafficdata)},
+             "f(times)" ={g1<-plotTimes(input,maintrafficdata)}
              )
             
+      switch(input$plotType,
+             "single"   ={g2<-" "},
+             "f(sites)" ={g2<-plotSites(input,maintrafficdata,volume=TRUE,filter=input$filter)},
+             "f(days)"  ={g2<-plotDays(input,maintrafficdata,volume=TRUE,filter=input$filter)},
+             "f(times)" ={g2<-plotTimes(input,maintrafficdata,volume=TRUE,filter=input$filter)}
+      )
       
       g<-generate_tab("Graphs",
                       tabs=c("Speed","Volume"),
-                      tabContents=c(g1,"to be done"),
-                      open=1) 
+                      tabContents=c(g1,g2),
+                      open=openTab) 
     output$trafficHTML <- renderUI(HTML(g))
   })
   
