@@ -30,39 +30,16 @@ ui <- fluidPage(
       ".table label{ display: table-cell; text-align: center;vertical-align: middle; }  .form-group { display: table-row;}"
       )),
     
-    tags$style(HTML('.popup {
-      position: relative;
-      display: inline-block;
-      cursor: pointer;
-    }
-      .popup .popuptext {
-        visibility: hidden;
-        width: 160px;
-        background-color: #555;
-          color: #fff;
-          text-align: center;
-        border-radius: 6px;
-        padding: 8px 0;
-        position: absolute;
-        z-index: 1;
-        bottom: 125%;
-        left: 50%;
-        margin-left: -80px;
-      }
-      .popup .popuptext::after {
-        content: "";
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        margin-left: -5px;
-        border-width: 5px;
-        border-style: solid;
-        border-color: #555 transparent transparent transparent;
-      }
-      .popup .show {
-        visibility: visible;
-      }'
-    ))
+    tags$style(HTML(
+    "#shiny-notification-panel {
+      position: fixed;
+      bottom: 70%;
+      right: 50%;
+      transform: translate(50%, 50%);
+      width: 700px; 
+      height: 300px;
+    }"
+  ))
   ),
 
   # App title ----
