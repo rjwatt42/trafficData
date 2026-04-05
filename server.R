@@ -27,19 +27,22 @@ server <- function(input, output) {
     })
   
   if (!exists("maintrafficdata")) {
-  # maindata<<-readRDS("temp.rds")
-    withProgress(message = 'Loading data', value = 0, {
-      data<-list()
-      for (i in 1:9) {
-        incProgress(1/9, detail = paste("Reading part", i))
-        d<-getData(i)
-        data<-c(data,list(d))
+    if (getwd()=="/Users/rogerwatt/Documents/GitHub/trafficData") {
+      withProgress(message = 'Loading data', value = 0, {
+        data<-list()
+        for (i in 1:9) {
+          incProgress(1/9, detail = paste("Reading part", i))
+          d<-getData(i)
+          data<-c(data,list(d))
+        }
+        names(data)<-paste0("s",1:9)
       }
-      names(data)<-paste0("s",1:9)
+      )
+      maintrafficdata<<-data
+      saveRDS(maintrafficdata,"/Users/rogerwatt/Documents/GitHub/trafficData/maintrafficdata.rds")
+    } else {
+      maintrafficdata<<-readRDS("maintrafficdata.rds")
     }
-    )
-    maintrafficdata<<-data
-    # saveRDS(maintrafficdata,"maindata.rds")
   }
   
   
