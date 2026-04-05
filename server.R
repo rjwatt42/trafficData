@@ -2,12 +2,12 @@
 source('basicPlot.R')
 library('ggplot2')
 
-data<-NULL
+# data<-NULL
 
 server <- function(input, output) {
   BrawOpts(graphicsType = "HTML")
   
-  if (is.null(data))
+  if (!exists("data"))
   {  
     withProgress(message = 'Loading data', value = 0, {
       data<-list()
@@ -30,7 +30,7 @@ server <- function(input, output) {
       
       g<-generate_tab("Graphs",
                       tabs=c("Speed","Volume"),
-                      tabContents=c(g1,"bbb"),
+                      tabContents=c(g1,"to be done"),
                       open=1) 
     output$trafficHTML <- renderUI(HTML(g))
   })

@@ -63,13 +63,17 @@ ui <- fluidPage(
                                tags$td(width = "70%", tags$div(style=localStyle,'day:')),
                                tags$td(width = "50%", selectInput("whichDay", NULL,c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday","All"),selected = "Monday",selectize=FALSE))
                              ),
-                             tags$tr(
-                               tags$td(width = "70%", tags$div(style=localStyle,'direction:')),
-                               tags$td(width = "50%", selectInput("whichDirection", NULL,c("Eastbound","Westbound","Both"),selected = "Eastbound",selectize=FALSE))
-                             ),
+                             # tags$tr(
+                             #   tags$td(width = "70%", tags$div(style=localStyle,'direction:')),
+                             #   tags$td(width = "50%", selectInput("whichDirection", NULL,c("Eastbound","Westbound","Both"),selected = "Eastbound",selectize=FALSE))
+                             # ),
                              tags$tr(
                                tags$td(width = "70%", tags$div(style=localStyle,'time:')),
-                               tags$td(width = "50%", selectInput("whichTime", NULL,0:23,selected = 9,selectize=FALSE))
+                               tags$td(width = "50%", selectInput("whichTime", NULL,c("All",paste0(format(0:23),".00")),selected = " 9.00",selectize=FALSE))
+                             ),
+                             tags$tr(
+                               tags$td(width = "70%", tags$div(style=localStyle,'graph limits:')),
+                               tags$td(width = "50%", numericInput("fixedLimits", NULL, value=200,step=50))
                              )
                   )
         ),
