@@ -39,7 +39,7 @@ server <- function(input, output) {
     }
     )
     maintrafficdata<<-data
-    saveRDS(maintrafficdata,"maindata.rds")
+    # saveRDS(maintrafficdata,"maindata.rds")
   }
   
   

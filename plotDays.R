@@ -30,9 +30,9 @@ plotDays<-function(input,data,volume=FALSE,filter="none") {
     )
     
     for (day in 1:7) {
-      v<-data.frame(y=c(0,1,1,0)*volumes[1,day],x=c(0,0,1,1)+(day-0.5))
+      v<-data.frame(y=-c(0,1,1,0)*volumes[1,day],x=c(0,0,1,1)+(day-0.5))
       g<-addG(g,dataPolygon(v,fill="red",colour=NA))
-      v<-data.frame(y=-c(0,1,1,0)*volumes[2,day],x=c(0,0,1,1)+(day-0.5))
+      v<-data.frame(y=c(0,1,1,0)*volumes[2,day],x=c(0,0,1,1)+(day-0.5))
       g<-addG(g,dataPolygon(v,fill="red",colour=NA))
       if (filter!="red") {
         for (direction in 1:2) {
