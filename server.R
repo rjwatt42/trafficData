@@ -27,28 +27,31 @@ server <- function(input, output) {
     })
   
   if (!exists("maintrafficdata")) {
-    if (getwd()=="/Users/rogerwatt/Documents/GitHub/trafficData") {
-      withProgress(message = 'Loading data', value = 0, {
-        data<-list()
-        for (i in 1:9) {
-          incProgress(1/9, detail = paste("Reading part", i))
-          d<-getData(i)
-          data<-c(data,list(d))
-        }
-        names(data)<-paste0("s",1:9)
-      }
-      )
-      maintrafficdata<<-data
-      saveRDS(maintrafficdata,"/Users/rogerwatt/Documents/GitHub/trafficData/maintrafficdata.rds")
-    } else {
-      maintrafficdata<<-readRDS("maintrafficdata.rds")
-    }
+    # if (getwd()=="/Users/rogerwatt/Documents/GitHub/trafficData" 
+    #     && 1==2) {
+      # withProgress(message = 'Loading data', value = 0, {
+      #   data<-list()
+      #   for (i in 1:9) {
+      #     incProgress(1/9, detail = paste("Reading part", i))
+      #     d<-getData(i)
+      #     data<-c(data,list(d))
+      #   }
+      #   names(data)<-paste0("s",1:9)
+      # }
+      # )
+      # maintrafficdata<<-data
+      # saveRDS(maintrafficdata,"./maintrafficdata.rds")
+    # } else {
+      url1<-"https://github.com/rjwatt42/trafficData/raw/refs/heads/main/maintrafficdata.rds"
+      filename <- tempfile(fileext=".xlsx")
+      download.file(url1, filename, mode="wb")
+      maintrafficdata<<-readRDS(filename)
+    # }
   }
   
   
   observeEvent({c(input$whichSite,input$whichDay,input$whichTime,
-                  input$plotType,input$filter)
-    }, 
+                  input$plotType,input$filter)}, 
     {
       if (input$plotType=="f(sites)") shinyjs::disable("whichSite")
       else shinyjs::enable("whichSite")

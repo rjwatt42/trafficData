@@ -25,7 +25,7 @@ plotDays<-function(input,data,volume=FALSE,filter="none") {
     ylim<-c(-1,1)*max(500,max(volumes))
     g<-startPlot(xlim=xlim,
                  ylim=ylim,
-                 xlabel="Day",xticks=1:7,
+                 xlabel="Day",xticks=list(breaks=1:7,labels=c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"),logScale=FALSE),
                  ylabel="Volume",yticks=list(breaks=NULL,labels=NULL,logScale=FALSE)
     )
     
@@ -87,6 +87,18 @@ plotDays<-function(input,data,volume=FALSE,filter="none") {
         }
         g<-addG(g,dataPolygon(result,colour=NA,fill=col,alpha=fullresult$counts[direction,i-1]/100))
       }
+      use<-fullresult$speeds>=(d$speedLimit*1.1+2)
+      hmm<-sum(fullresult$counts[direction,use])
+      if (direction==2) 
+        g<-addG(g,dataText(data.frame(x=day,y=ylim[2]),hmm,hjust=0.5,vjust=1,colour="#c00",size=0.75,fontface="bold"))
+      else
+        g<-addG(g,dataText(data.frame(x=day,y=ylim[1]),hmm,hjust=0.5,colour="#c00",size=0.75,fontface="bold"))
+      use<-fullresult$speeds<(d$speedLimit*1.1+2) & fullresult$speeds>=d$speedLimit
+      hmm<-sum(fullresult$counts[direction,use])
+      if (direction==2) 
+        g<-addG(g,dataText(data.frame(x=day,y=ylim[2]-diff(ylim)/20),hmm,hjust=0.5,vjust=1,colour="#ca0",size=0.75,fontface="bold"))
+      else
+        g<-addG(g,dataText(data.frame(x=day,y=ylim[1]+diff(ylim)/20),hmm,hjust=0.5,colour="#ca0",size=0.75,fontface="bold"))
     }
   }
 

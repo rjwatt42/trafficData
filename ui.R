@@ -57,36 +57,36 @@ ui <- fluidPage(
         wellPanel(tags$div(style="margin-top:0px;font-weight:bold;","Select"),
                   tags$table(width="100%",class="MyTable",
                              tags$tr(
-                               tags$td(width = "70%", tags$div(style=localStyle,'site:')),
-                               tags$td(width = "50%", selectInput("whichSite", NULL,c(format(1:9)),selected = "1",selectize=FALSE))
+                               tags$td(width = "60%", tags$div(style=localStyle,'site:')),
+                               tags$td(width = "40%", selectInput("whichSite", NULL,c(format(1:9)),selected = "1",selectize=FALSE))
                              ),
                              tags$tr(
-                               tags$td(width = "70%", tags$div(style=localStyle,'day:')),
-                               tags$td(width = "50%", selectInput("whichDay", NULL,c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday","Average"),selected = "Monday",selectize=FALSE))
+                               tags$td(width = "60%", tags$div(style=localStyle,'day:')),
+                               tags$td(width = "40%", selectInput("whichDay", NULL,c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday","Average"),selected = "Monday",selectize=FALSE))
                              ),
                              # tags$tr(
                              #   tags$td(width = "70%", tags$div(style=localStyle,'direction:')),
                              #   tags$td(width = "50%", selectInput("whichDirection", NULL,c("Eastbound","Westbound","Both"),selected = "Eastbound",selectize=FALSE))
                              # ),
                              tags$tr(
-                               tags$td(width = "70%", tags$div(style=localStyle,'time:')),
-                               tags$td(width = "50%", selectInput("whichTime", NULL,c(paste0(format(0:23),".00"),"Average"),selected = " 9.00",selectize=FALSE))
+                               tags$td(width = "60%", tags$div(style=localStyle,'time:')),
+                               tags$td(width = "40%", selectInput("whichTime", NULL,c(paste0(format(0:23),".00"),"Average"),selected = " 9.00",selectize=FALSE))
                              )
                   )
         ),
         wellPanel(tags$div(style="font-weight:bold;",'Display'),
                   tags$table(width="100%",
                              tags$tr(
-                               tags$td(width = "70%", tags$div(style=localStyle,'graph type:')),
-                               tags$td(width = "50%", selectInput("plotType", NULL,c("single","f(sites)","f(days)","f(times)"), selected="single",selectize=FALSE))
+                               tags$td(width = "60%", tags$div(style=localStyle,'graph type:')),
+                               tags$td(width = "40%", selectInput("plotType", NULL,c("single","f(sites)","f(days)","f(times)"), selected="single",selectize=FALSE))
                              ),
                              tags$tr(
-                               tags$td(width = "70%", tags$div(style=localStyle,'filter:')),
-                               tags$td(width = "50%", selectInput("filter", NULL,c("none","orange","red"), selected="none",selectize=FALSE))
+                               tags$td(width = "60%", tags$div(style=localStyle,'filter:')),
+                               tags$td(width = "40%", selectInput("filter", NULL,c("none","orange","red"), selected="none",selectize=FALSE))
                              ),
                              tags$tr(
-                               tags$td(width = "70%", tags$div(style=localStyle,'graph limits:')),
-                               tags$td(width = "50%", numericInput("fixedLimits", NULL, value=200,step=50))
+                               tags$td(width = "60%", tags$div(style=localStyle,'graph limits:')),
+                               tags$td(width = "40%", numericInput("fixedLimits", NULL, value=200,step=50))
                              )
                   )
         ),

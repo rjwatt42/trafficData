@@ -88,6 +88,18 @@ plotTimes<-function(input,data,volume=FALSE,filter="none") {
       }
       meanSpeed<-sum(fullresult$speeds*fullresult$counts[direction,])/sum(fullresult$counts[direction,])
       means[direction,time+1]<-meanSpeed
+      use<-fullresult$speeds>=(d$speedLimit*1.1+2)
+      hmm<-sum(fullresult$counts[direction,use])
+      if (direction==2) 
+        g<-addG(g,dataText(data.frame(x=time,y=ylim[2]),hmm,hjust=0.5,vjust=1,colour="#c00",size=0.75,fontface="bold"))
+      else
+        g<-addG(g,dataText(data.frame(x=time,y=ylim[1]),hmm,hjust=0.5,colour="#c00",size=0.75,fontface="bold"))
+      use<-fullresult$speeds<(d$speedLimit*1.1+2) & fullresult$speeds>=d$speedLimit
+      hmm<-sum(fullresult$counts[direction,use])
+      if (direction==2) 
+        g<-addG(g,dataText(data.frame(x=time,y=ylim[2]-diff(ylim)/20),hmm,hjust=0.5,vjust=1,colour="#ca0",size=0.75,fontface="bold"))
+      else
+        g<-addG(g,dataText(data.frame(x=time,y=ylim[1]+diff(ylim)/20),hmm,hjust=0.5,colour="#ca0",size=0.75,fontface="bold"))
     }
   }
 
