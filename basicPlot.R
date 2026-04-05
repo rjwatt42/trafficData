@@ -916,7 +916,7 @@ drawPolygon<-function(data,colour="#000000",fill="white",alpha=1,linewidth=0.25,
          "HTML"={
            opacity<-1
            if (!is.na(colour) && colour=="none") colour=NA
-           if (is.na(colour)) colour<-fill
+           if (is.na(colour)) linewidth<-0
            x<-svgX(data$x)
            y<-svgY(data$y)
            ls<-''

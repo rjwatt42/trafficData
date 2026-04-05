@@ -57,11 +57,11 @@ ui <- fluidPage(
                   tags$table(width="100%",class="MyTable",
                              tags$tr(
                                tags$td(width = "70%", tags$div(style=localStyle,'site:')),
-                               tags$td(width = "50%", selectInput("whichSite", NULL,format(1:9),selected = "1",selectize=FALSE))
+                               tags$td(width = "50%", selectInput("whichSite", NULL,c("All",format(1:9)),selected = "1",selectize=FALSE))
                              ),
                              tags$tr(
                                tags$td(width = "70%", tags$div(style=localStyle,'day:')),
-                               tags$td(width = "50%", selectInput("whichDay", NULL,c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday","All"),selected = "Monday",selectize=FALSE))
+                               tags$td(width = "50%", selectInput("whichDay", NULL,c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday","Average"),selected = "Monday",selectize=FALSE))
                              ),
                              # tags$tr(
                              #   tags$td(width = "70%", tags$div(style=localStyle,'direction:')),
@@ -69,7 +69,7 @@ ui <- fluidPage(
                              # ),
                              tags$tr(
                                tags$td(width = "70%", tags$div(style=localStyle,'time:')),
-                               tags$td(width = "50%", selectInput("whichTime", NULL,c("All",paste0(format(0:23),".00")),selected = " 9.00",selectize=FALSE))
+                               tags$td(width = "50%", selectInput("whichTime", NULL,c(paste0(format(0:23),".00"),"Average"),selected = " 9.00",selectize=FALSE))
                              ),
                              tags$tr(
                                tags$td(width = "70%", tags$div(style=localStyle,'graph limits:')),
