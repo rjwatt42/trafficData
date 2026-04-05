@@ -96,17 +96,17 @@ ui <- fluidPage(
                              )
                   )
         ),
-        wellPanel(tags$div(style="font-weight:bold;",'Code'),
+        wellPanel(tags$div(style="font-weight:bold;",'Links to Code and Data'),
                   tags$table(width="100%",
                              tags$tr(
                                tags$td(tags$div('  ')),
                                tags$td(
-                                 tags$div(HTML('<a href="https://github.com/rjwatt42/trafficData"><b>Code</b></a>'))),
+                                 tags$div(HTML('Code is <a href="https://github.com/rjwatt42/trafficData"><u>here</u></a>'))),
                                ),
                              tags$tr(
                                tags$td(tags$div('  ')),
                                tags$td(
-                                 tags$div(HTML('<a href="https://github.com/rjwatt42/trafficData/Data/"><b>Data</b></a>'))),
+                                 tags$div(HTML('Data is <a href="https://github.com/rjwatt42/trafficData/Data/"><u>here</u></a>'))),
                              )
                   )
         )

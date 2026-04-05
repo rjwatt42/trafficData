@@ -9,10 +9,16 @@ server <- function(input, output) {
   
   if (is.null(data))
   {  
-    data<<-list(s1=getData(1),s2=getData(2),s3=getData(3),
-                s4=getData(4),s5=getData(5),s6=getData(6),
-                s7=getData(7),s8=getData(8),s9=getData(9)
-                )
+    withProgress(message = 'Loading data', value = 0, {
+      data<-list()
+      for (i in 1:9) {
+        incProgress(1/9, detail = paste("Reading part", i))
+        d<-getData(i)
+        data<-c(data,list(d))
+      }
+      names(data)<-paste0("s",1:9)
+    }
+    )
   }
 
   observeEvent({c(input$whichSite,input$whichDay,input$whichDirection,input$whichTime)
