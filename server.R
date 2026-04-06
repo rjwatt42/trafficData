@@ -19,6 +19,7 @@ startTab<-0
 
 server <- function(input, output) {
   BrawOpts(graphicsType = "HTML")
+  svgBox(height=450,aspect=1.33)
   
   openTab<<-1
   observeEvent({c(input$filter)}, { 
@@ -61,23 +62,33 @@ server <- function(input, output) {
       else shinyjs::enable("whichTime")
       
       switch(input$plotType,
-             "single"   ={g1<-plotSpeeds(input,maintrafficdata)},
-             "f(sites)" ={g1<-plotSites(input,maintrafficdata)},
-             "f(days)"  ={g1<-plotDays(input,maintrafficdata)},
-             "f(times)" ={g1<-plotTimes(input,maintrafficdata)}
+             "single"   ={
+               g1<-plotSpeeds(input,maintrafficdata)
+               g2<-plotSpeeds(input,maintrafficdata,volume=TRUE,filter=input$filter)
+               g3<-plotSpeeds(input,maintrafficdata,volume=TRUE,showNumbers=TRUE)
+               },
+             "f(sites)" ={
+               g1<-plotSites(input,maintrafficdata)
+               g2<-plotSites(input,maintrafficdata,volume=TRUE,filter=input$filter)
+               g3<-plotSites(input,maintrafficdata,volume=TRUE,showNumbers=TRUE)
+             },
+             "f(days)"  ={
+               g1<-plotDays(input,maintrafficdata)
+               g2<-plotDays(input,maintrafficdata,volume=TRUE,filter=input$filter)
+               g3<-plotDays(input,maintrafficdata,volume=TRUE,showNumbers=TRUE)
+             },
+             "f(times)" ={
+               g1<-plotTimes(input,maintrafficdata)
+               g2<-plotTimes(input,maintrafficdata,volume=TRUE,filter=input$filter)
+               g3<-plotTimes(input,maintrafficdata,volume=TRUE,showNumbers=TRUE)
+             }
              )
-            
-      switch(input$plotType,
-             "single"   ={g2<-" "},
-             "f(sites)" ={g2<-plotSites(input,maintrafficdata,volume=TRUE,filter=input$filter)},
-             "f(days)"  ={g2<-plotDays(input,maintrafficdata,volume=TRUE,filter=input$filter)},
-             "f(times)" ={g2<-plotTimes(input,maintrafficdata,volume=TRUE,filter=input$filter)}
-      )
-      
-      g<-generate_tab("Graphs",
-                      tabs=c("Speed","Volume"),
-                      tabContents=c(g1,g2),
-                      open=openTab) 
+
+      g<-generate_tab("Graphs: ",titleWidth=50,
+                      tabs=c("Speed","Volume","Data"),
+                      tabContents=c(g1,g2,g3),
+                      open=openTab
+                      ) 
     output$trafficHTML <- renderUI(HTML(g))
   })
   

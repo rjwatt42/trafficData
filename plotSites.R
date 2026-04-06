@@ -1,6 +1,4 @@
-plotSites<-function(input,data,volume=FALSE,filter="none") {
-  
-  BrawOpts(graphicsType = "HTML")
+plotSites<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
   
   xlim<-c(0,10)
   
@@ -10,7 +8,7 @@ plotSites<-function(input,data,volume=FALSE,filter="none") {
       d<-data[[paste0("s",site)]]
       fullresult<-getSpeeds(input,d$values)
       switch(filter,
-             "none"={use<-1:length(fullresult$speeds)},
+             "green"={use<-1:length(fullresult$speeds)},
              "red"=use<-which(fullresult$speeds>=(d$speedLimit*1.1+2)),
              "orange"=use<-which(fullresult$speeds>=(d$speedLimit))
       )
@@ -19,39 +17,67 @@ plotSites<-function(input,data,volume=FALSE,filter="none") {
       }
     }
     
-    ylim<-c(-1,1)*max(500,max(volumes))
-    g<-startPlot(xlim=xlim,
-                 ylim=ylim,
-                 xlabel="Site",xticks=1:9,
-                 ylabel="Volume",yticks=list(breaks=NULL,labels=NULL,logScale=FALSE)
-    )
+    if (showNumbers) {
+      ylim<-c(-5,5)
+      g<-startPlot(xlim=xlim,
+                   ylim=ylim,
+                   xlabel="Site",xticks=1:9,
+                   ylabel="Volume",yticks=list(breaks=0,labels=" ",logScale=FALSE),
+                   box="x",top=1
+      )
+    } else  {
+      ylim<-c(-1,1)*max(500,max(volumes,na.rm=TRUE))
+      g<-startPlot(xlim=xlim,
+                   ylim=ylim,
+                   xlabel="Site",xticks=1:9,
+                   ylabel="Volume",yticks=list(breaks=NULL,labels=NULL,logScale=FALSE),
+                   top=1
+      )
+    }         
+    g<-addG(g,plotTitle(paste0(input$whichDay," at ",input$whichTime)))
     
     for (site in 1:9) {
       d<-data[[paste0("s",site)]]
       fullresult<-getSpeeds(input,d$values)
-      v<-data.frame(y=-c(0,1,1,0)*volumes[1,site],x=c(0,0,1,1)+(site-0.5))
-      g<-addG(g,dataPolygon(v,fill="red",colour=NA))
-      v<-data.frame(y=c(0,1,1,0)*volumes[2,site],x=c(0,0,1,1)+(site-0.5))
-      g<-addG(g,dataPolygon(v,fill="red",colour=NA))
-      if (filter!="red") {
+      if (showNumbers) {
+        mins<-c(0,d$speedLimit,d$speedLimit*1.1+2)
+        maxs<-c(d$speedLimit,d$speedLimit*1.1+2,100)
+        cols<-c("green","orange","red")
         for (direction in 1:2) {
-          use<-fullresult$speeds<(d$speedLimit*1.1+2)
-          if (filter=="orange") use<-use & fullresult$speeds>=(d$speedLimit)
-          volumes[direction,site]<-sum(fullresult$counts[direction,use])
+          sn<-(direction-1.5)
+          v<-sum(fullresult$counts[direction,])
+          g<-addG(g,dataText(data.frame(x=site,y=6*sn),label=format(v,digits=1),colour="white",hjust=0.5,vjust=0.5))
+          for (i in 1:3) {
+            use<-fullresult$speeds>=mins[i] & fullresult$speeds<maxs[i]
+            v<-sum(fullresult$counts[direction,use])
+            g<-addG(g,dataText(data.frame(x=site,y=i*sn),label=format(v,digits=1),colour=cols[i],hjust=0.5,vjust=0.5))
+          }
         }
+      } else {
         v<-data.frame(y=-c(0,1,1,0)*volumes[1,site],x=c(0,0,1,1)+(site-0.5))
-        g<-addG(g,dataPolygon(v,fill="orange",colour=NA))
+        g<-addG(g,dataPolygon(v,fill="red",colour=NA))
         v<-data.frame(y=c(0,1,1,0)*volumes[2,site],x=c(0,0,1,1)+(site-0.5))
-        g<-addG(g,dataPolygon(v,fill="orange",colour=NA))
-        if (filter!="orange") {
+        g<-addG(g,dataPolygon(v,fill="red",colour=NA))
+        if (filter!="red") {
           for (direction in 1:2) {
-            use<-fullresult$speeds<d$speedLimit
+            use<-fullresult$speeds<(d$speedLimit*1.1+2)
+            if (filter=="orange") use<-use & fullresult$speeds>=(d$speedLimit)
             volumes[direction,site]<-sum(fullresult$counts[direction,use])
           }
           v<-data.frame(y=-c(0,1,1,0)*volumes[1,site],x=c(0,0,1,1)+(site-0.5))
-          g<-addG(g,dataPolygon(v,fill="green",colour=NA))
+          g<-addG(g,dataPolygon(v,fill="orange",colour=NA))
           v<-data.frame(y=c(0,1,1,0)*volumes[2,site],x=c(0,0,1,1)+(site-0.5))
-          g<-addG(g,dataPolygon(v,fill="green",colour=NA))
+          g<-addG(g,dataPolygon(v,fill="orange",colour=NA))
+          if (filter!="orange") {
+            for (direction in 1:2) {
+              use<-fullresult$speeds<d$speedLimit
+              volumes[direction,site]<-sum(fullresult$counts[direction,use])
+            }
+            v<-data.frame(y=-c(0,1,1,0)*volumes[1,site],x=c(0,0,1,1)+(site-0.5))
+            g<-addG(g,dataPolygon(v,fill="green",colour=NA))
+            v<-data.frame(y=c(0,1,1,0)*volumes[2,site],x=c(0,0,1,1)+(site-0.5))
+            g<-addG(g,dataPolygon(v,fill="green",colour=NA))
+          }
         }
       }
     }
@@ -66,9 +92,11 @@ plotSites<-function(input,data,volume=FALSE,filter="none") {
   g<-startPlot(xlim=xlim,
                ylim=ylim,
                xlabel="Site",xticks=1:9,
-               ylabel="Speed",yticks=list(breaks=NULL,labels=NULL,logScale=FALSE)
-               )
-
+               ylabel="Speed",yticks=list(breaks=NULL,labels=NULL,logScale=FALSE),
+               top=1
+  )
+  g<-addG(g,plotTitle(paste0(input$whichDay," at ",input$whichTime)))
+  
   for (site in 1:9) {
     d<-data[[paste0("s",site)]]
     fullresult<-getSpeeds(input,d$values)
@@ -85,21 +113,23 @@ plotSites<-function(input,data,volume=FALSE,filter="none") {
         }
         g<-addG(g,dataPolygon(result,colour=NA,fill=col,alpha=fullresult$counts[direction,i-1]/100))
       }
-      use<-fullresult$speeds>=(d$speedLimit*1.1+2)
-      hmm<-sum(fullresult$counts[direction,use])
-      if (direction==2) 
-        g<-addG(g,dataText(data.frame(x=site,y=ylim[2]),hmm,hjust=0.5,vjust=1,colour="#c00",size=0.75,fontface="bold"))
-      else
-        g<-addG(g,dataText(data.frame(x=site,y=ylim[1]),hmm,hjust=0.5,colour="#c00",size=0.75,fontface="bold"))
-      use<-fullresult$speeds<(d$speedLimit*1.1+2) & fullresult$speeds>=d$speedLimit
-      hmm<-sum(fullresult$counts[direction,use])
-      if (direction==2) 
-        g<-addG(g,dataText(data.frame(x=site,y=ylim[2]-diff(ylim)/20),hmm,hjust=0.5,vjust=1,colour="#ca0",size=0.75,fontface="bold"))
-      else
-        g<-addG(g,dataText(data.frame(x=site,y=ylim[1]+diff(ylim)/20),hmm,hjust=0.5,colour="#ca0",size=0.75,fontface="bold"))
+      if (showNumbers) {
+        use<-fullresult$speeds>=(d$speedLimit*1.1+2)
+        hmm<-sum(fullresult$counts[direction,use])
+        if (direction==2) 
+          g<-addG(g,dataText(data.frame(x=site,y=ylim[2]),hmm,hjust=0.5,vjust=1,colour="#c00",fill="black",background=TRUE,size=0.75,fontface="bold"))
+        else
+          g<-addG(g,dataText(data.frame(x=site,y=ylim[1]),hmm,hjust=0.5,colour="#c00",fill="black",background=TRUE,size=0.75,fontface="bold"))
+        use<-fullresult$speeds<(d$speedLimit*1.1+2) & fullresult$speeds>=d$speedLimit
+        hmm<-sum(fullresult$counts[direction,use])
+        if (direction==2) 
+          g<-addG(g,dataText(data.frame(x=site,y=ylim[2]-diff(ylim)/20),hmm,hjust=0.5,vjust=1,colour="#ca0",fill="black",background=TRUE,size=0.75,fontface="bold"))
+        else
+          g<-addG(g,dataText(data.frame(x=site,y=ylim[1]+diff(ylim)/20),hmm,hjust=0.5,colour="#ca0",fill="black",background=TRUE,size=0.75,fontface="bold"))
+      }
     }
   }
-
+  
   g<-addG(g,dataLine(data.frame(x=xlim,y=c(0,0)),colour="grey",linewidth=1.5))
   
   g<-addG(g,dataText(data.frame(x=max(xlim),y=max(ylim)*0.8),label="← Westwards ←",hjust = 1,vjust=1))

@@ -82,7 +82,7 @@ ui <- fluidPage(
                              ),
                              tags$tr(
                                tags$td(width = "60%", tags$div(style=localStyle,'filter:')),
-                               tags$td(width = "40%", selectInput("filter", NULL,c("none","orange","red"), selected="none",selectize=FALSE))
+                               tags$td(width = "40%", selectInput("filter", NULL,c("green","orange","red"), selected="green",selectize=FALSE))
                              ),
                              tags$tr(
                                tags$td(width = "60%", tags$div(style=localStyle,'graph limits:')),
