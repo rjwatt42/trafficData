@@ -85,7 +85,7 @@ server <- function(input, output) {
              )
 
       g<-generate_tab("Graphs: ",titleWidth=50,
-                      tabs=c("Speed","Volume","Data"),
+                      tabs=c("Traffic Speed","Traffic Volume","Data"),
                       tabContents=c(g1,g2,g3),
                       open=openTab
                       ) 
