@@ -117,7 +117,7 @@ plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showN
     y<-c(0,result$y[i],result$y[i],0)
     g<-addG(g,dataPolygon(data.frame(x=x,y=y),colour="none",fill="orange"))
   }
-  use3<-max(which(result$x<=(d$speedLimit+15)))-1
+  use3<-max(which(result$x<=(d$speedLimit+10)))-1
   for (i in (use2+1):use3) {
     x<-c(result$x[i],result$x[i],result$x[i+1],result$x[i+1])
     y<-c(0,result$y[i],result$y[i],0)

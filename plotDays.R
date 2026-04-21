@@ -19,7 +19,6 @@ plotDays<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
         volumes[direction,day]<-sum(fullresult$counts[direction,use])
       }
     }
-    
     if (showNumbers) {
       ylim<-c(-5,5)
       g<-startPlot(xlim=xlim,
@@ -37,7 +36,10 @@ plotDays<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
                    top=1
       )
     }         
-    g<-addG(g,plotTitle(paste0("site:",input$whichSite," at ",input$whichTime)))
+    if (input$whichTime=="Average") 
+      g<-addG(g,plotTitle(paste0("site:",input$whichSite," at ","average time")))
+    else
+      g<-addG(g,plotTitle(paste0("site:",input$whichSite," at ",input$whichTime)))
     
     for (day in 1:7) {
       if (showNumbers) {
@@ -58,21 +60,37 @@ plotDays<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
         }
       } else {
         v<-data.frame(y=-c(0,1,1,0)*volumes[1,day],x=c(0,0,1,1)+(day-0.5))
-        g<-addG(g,dataPolygon(v,fill="red",colour=NA))
+        g<-addG(g,dataPolygon(v,fill="purple",colour=NA))
         v<-data.frame(y=c(0,1,1,0)*volumes[2,day],x=c(0,0,1,1)+(day-0.5))
-        g<-addG(g,dataPolygon(v,fill="red",colour=NA))
-        if (filter!="red") {
+        g<-addG(g,dataPolygon(v,fill="purple",colour=NA))
+        if (filter!="purple") {
           for (direction in 1:2) {
-            use<-fullresult$speeds<(d$speedLimit*1.1+2)
-            if (filter=="orange") use<-use & fullresult$speeds>=(d$speedLimit)
+            whichDay<-c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday")[day]
+            fullresult<-getSpeeds(list(whichDay=whichDay,whichTime=input$whichTime),d$values)
+            use<-fullresult$speeds<(d$speedLimit+10)
+            if (filter=="red") use<-use & fullresult$speeds>=(d$speedLimit)
             volumes[direction,day]<-sum(fullresult$counts[direction,use])
           }
           v<-data.frame(y=-c(0,1,1,0)*volumes[1,day],x=c(0,0,1,1)+(day-0.5))
-          g<-addG(g,dataPolygon(v,fill="orange",colour=NA))
+          g<-addG(g,dataPolygon(v,fill="red",colour=NA))
           v<-data.frame(y=c(0,1,1,0)*volumes[2,day],x=c(0,0,1,1)+(day-0.5))
-          g<-addG(g,dataPolygon(v,fill="orange",colour=NA))
-          if (filter!="orange") {
+          g<-addG(g,dataPolygon(v,fill="red",colour=NA))
+          if (filter!="red") {
             for (direction in 1:2) {
+              whichDay<-c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday")[day]
+              fullresult<-getSpeeds(list(whichDay=whichDay,whichTime=input$whichTime),d$values)
+              use<-fullresult$speeds<(d$speedLimit*1.1+2)
+              if (filter=="orange") use<-use & fullresult$speeds>=(d$speedLimit)
+              volumes[direction,day]<-sum(fullresult$counts[direction,use])
+            }
+            v<-data.frame(y=-c(0,1,1,0)*volumes[1,day],x=c(0,0,1,1)+(day-0.5))
+            g<-addG(g,dataPolygon(v,fill="orange",colour=NA))
+            v<-data.frame(y=c(0,1,1,0)*volumes[2,day],x=c(0,0,1,1)+(day-0.5))
+            g<-addG(g,dataPolygon(v,fill="orange",colour=NA))
+            if (filter!="orange") {
+            for (direction in 1:2) {
+              whichDay<-c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday")[day]
+              fullresult<-getSpeeds(list(whichDay=whichDay,whichTime=input$whichTime),d$values)
               use<-fullresult$speeds<d$speedLimit
               volumes[direction,day]<-sum(fullresult$counts[direction,use])
             }
@@ -81,6 +99,7 @@ plotDays<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
             v<-data.frame(y=c(0,1,1,0)*volumes[2,day],x=c(0,0,1,1)+(day-0.5))
             g<-addG(g,dataPolygon(v,fill="green",colour=NA))
           }
+        }
         }
       }
     }
@@ -99,7 +118,10 @@ plotDays<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
                ylabel="Speed",yticks=list(breaks=NULL,labels=NULL,logScale=FALSE),
                top=1
   )
-  g<-addG(g,plotTitle(paste0("site:",input$whichSite," at ",input$whichTime)))
+  if (input$whichTime=="Average") 
+    g<-addG(g,plotTitle(paste0("site:",input$whichSite," at ","average time")))
+  else
+    g<-addG(g,plotTitle(paste0("site:",input$whichSite," at ",input$whichTime)))
   d<-data[[paste0("s",site)]]
   for (day in 1:7) {
     whichDay<-c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday")[day]

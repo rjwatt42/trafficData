@@ -35,7 +35,10 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
                    top=1
       )
     }
-    g<-addG(g,plotTitle(paste0("site:",input$whichSite," on ",input$whichDay)))
+    if (input$whichDay=="Average") 
+      g<-addG(g,plotTitle(paste0("site:",input$whichSite," on ","average day")))
+    else
+      g<-addG(g,plotTitle(paste0("site:",input$whichSite," on ",input$whichDay)))
     
     for (time in 0:23) {
       fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time),d$values)
@@ -55,21 +58,34 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
         }
       } else {
         v<-data.frame(y=-c(0,1,1,0)*volumes[1,time+1],x=c(0,0,1,1)+(time-0.5))
-        g<-addG(g,dataPolygon(v,fill="red",colour=NA))
+        g<-addG(g,dataPolygon(v,fill="purple",colour=NA))
         v<-data.frame(y=c(0,1,1,0)*volumes[2,time+1],x=c(0,0,1,1)+(time-0.5))
-        g<-addG(g,dataPolygon(v,fill="red",colour=NA))
-        if (filter!="red") {
+        g<-addG(g,dataPolygon(v,fill="purple",colour=NA))
+        if (filter!="purple") {
           for (direction in 1:2) {
-            use<-fullresult$speeds<(d$speedLimit*1.1+2)
-            if (filter=="orange") use<-use & fullresult$speeds>=(d$speedLimit)
+            fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time),d$values)
+            use<-fullresult$speeds<(d$speedLimit+10)
+            if (filter=="red") use<-use & fullresult$speeds>=(d$speedLimit)
             volumes[direction,time+1]<-sum(fullresult$counts[direction,use])
           }
           v<-data.frame(y=-c(0,1,1,0)*volumes[1,time+1],x=c(0,0,1,1)+(time-0.5))
+          g<-addG(g,dataPolygon(v,fill="red",colour=NA))
+          v<-data.frame(y=c(0,1,1,0)*volumes[2,time+1],x=c(0,0,1,1)+(time-0.5))
+          g<-addG(g,dataPolygon(v,fill="red",colour=NA))
+          if (filter!="red") {
+            for (direction in 1:2) {
+              fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time),d$values)
+              use<-fullresult$speeds<(d$speedLimit*1.1+2)
+              if (filter=="orange") use<-use & fullresult$speeds>=(d$speedLimit)
+              volumes[direction,time+1]<-sum(fullresult$counts[direction,use])
+            }
+            v<-data.frame(y=-c(0,1,1,0)*volumes[1,time+1],x=c(0,0,1,1)+(time-0.5))
           g<-addG(g,dataPolygon(v,fill="orange",colour=NA))
           v<-data.frame(y=c(0,1,1,0)*volumes[2,time+1],x=c(0,0,1,1)+(time-0.5))
           g<-addG(g,dataPolygon(v,fill="orange",colour=NA))
           if (filter!="orange") {
             for (direction in 1:2) {
+              fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time),d$values)
               use<-fullresult$speeds<d$speedLimit
               volumes[direction,time+1]<-sum(fullresult$counts[direction,use])
             }
@@ -77,6 +93,7 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
             g<-addG(g,dataPolygon(v,fill="green",colour=NA))
             v<-data.frame(y=c(0,1,1,0)*volumes[2,time+1],x=c(0,0,1,1)+(time-0.5))
             g<-addG(g,dataPolygon(v,fill="green",colour=NA))
+          }
           }
         }
       }
@@ -96,7 +113,10 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
                ylabel="Speed",yticks=list(breaks=NULL,labels=NULL,logScale=FALSE),
                top=1
   )
-  g<-addG(g,plotTitle(paste0("site:",input$whichSite," on ",input$whichDay)))
+  if (input$whichDay=="Average") 
+    g<-addG(g,plotTitle(paste0("site:",input$whichSite," on ","average day")))
+  else
+    g<-addG(g,plotTitle(paste0("site:",input$whichSite," on ",input$whichDay)))
   d<-data[[paste0("s",site)]]
   means<-matrix(0,2,24)
   for (time in 0:23) {
