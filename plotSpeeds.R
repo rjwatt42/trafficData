@@ -10,6 +10,7 @@ plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showN
       fullresult<-getSpeeds(input,d$values)
       switch(filter,
              "green"={use<-1:length(fullresult$speeds)},
+             "purple"=use<-which(fullresult$speeds>=(d$speedLimit+10)),
              "red"=use<-which(fullresult$speeds>=(d$speedLimit*1.1+2)),
              "orange"=use<-which(fullresult$speeds>=(d$speedLimit))
       )
@@ -42,12 +43,12 @@ plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showN
       if (showNumbers) {
         mins<-c(0,d$speedLimit,d$speedLimit*1.1+2)
         maxs<-c(d$speedLimit,d$speedLimit*1.1+2,100)
-        cols<-c("green","orange","red")
+        cols<-c("green","orange","red","purple")
         for (direction in 1:2) {
           sn<-(direction-1.5)
           v<-sum(fullresult$counts[direction,])
           g<-addG(g,dataText(data.frame(x=site,y=6*sn),label=format(v,digits=1),colour="white",hjust=0.5,vjust=0.5))
-          for (i in 1:3) {
+          for (i in 1:4) {
             use<-fullresult$speeds>=mins[i] & fullresult$speeds<maxs[i]
             v<-sum(fullresult$counts[direction,use])
             g<-addG(g,dataText(data.frame(x=site,y=i*sn),label=format(v,digits=1),colour=cols[i],hjust=0.5,vjust=0.5))
@@ -55,20 +56,30 @@ plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showN
         }
       } else {
         v<-data.frame(y=-c(0,1,1,0)*volumes[1,site],x=c(0,0,1,1)+(site-0.5))
-        g<-addG(g,dataPolygon(v,fill="red",colour=NA))
+        g<-addG(g,dataPolygon(v,fill="purple",colour=NA))
         v<-data.frame(y=c(0,1,1,0)*volumes[2,site],x=c(0,0,1,1)+(site-0.5))
-        g<-addG(g,dataPolygon(v,fill="red",colour=NA))
-        if (filter!="red") {
+        g<-addG(g,dataPolygon(v,fill="purple",colour=NA))
+        if (filter!="purple") {
           for (direction in 1:2) {
-            use<-fullresult$speeds<(d$speedLimit*1.1+2)
-            if (filter=="orange") use<-use & fullresult$speeds>=(d$speedLimit)
+            use<-fullresult$speeds<(d$speedLimit+10)
+            if (filter=="red") use<-use & fullresult$speeds>=(d$speedLimit)
             volumes[direction,site]<-sum(fullresult$counts[direction,use])
           }
           v<-data.frame(y=-c(0,1,1,0)*volumes[1,site],x=c(0,0,1,1)+(site-0.5))
-          g<-addG(g,dataPolygon(v,fill="orange",colour=NA))
+          g<-addG(g,dataPolygon(v,fill="red",colour=NA))
           v<-data.frame(y=c(0,1,1,0)*volumes[2,site],x=c(0,0,1,1)+(site-0.5))
-          g<-addG(g,dataPolygon(v,fill="orange",colour=NA))
-          if (filter!="orange") {
+          g<-addG(g,dataPolygon(v,fill="red",colour=NA))
+          if (filter!="red") {
+            for (direction in 1:2) {
+              use<-fullresult$speeds<(d$speedLimit*1.1+2)
+              if (filter=="orange") use<-use & fullresult$speeds>=(d$speedLimit)
+              volumes[direction,site]<-sum(fullresult$counts[direction,use])
+            }
+            v<-data.frame(y=-c(0,1,1,0)*volumes[1,site],x=c(0,0,1,1)+(site-0.5))
+            g<-addG(g,dataPolygon(v,fill="orange",colour=NA))
+            v<-data.frame(y=c(0,1,1,0)*volumes[2,site],x=c(0,0,1,1)+(site-0.5))
+            g<-addG(g,dataPolygon(v,fill="orange",colour=NA))
+            if (filter!="orange") {
             for (direction in 1:2) {
               use<-fullresult$speeds<d$speedLimit
               volumes[direction,site]<-sum(fullresult$counts[direction,use])
@@ -77,6 +88,7 @@ plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showN
             g<-addG(g,dataPolygon(v,fill="green",colour=NA))
             v<-data.frame(y=c(0,1,1,0)*volumes[2,site],x=c(0,0,1,1)+(site-0.5))
             g<-addG(g,dataPolygon(v,fill="green",colour=NA))
+            }
           }
         }
       }
@@ -127,7 +139,7 @@ plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showN
   for (i in (use3+1):use4) {
     x<-c(result$x[i],result$x[i],result$x[i+1],result$x[i+1])
     y<-c(0,result$y[i],result$y[i],0)
-    g<-addG(g,dataPolygon(data.frame(x=x,y=y),colour="none",fill="red"))
+    g<-addG(g,dataPolygon(data.frame(x=x,y=y),colour="none",fill="purple"))
   }
   }
   

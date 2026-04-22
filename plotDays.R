@@ -135,7 +135,10 @@ plotDays<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
         if (fullresult$speeds[i-1]<d$speedLimit) col<-"green"
         else {
           if (fullresult$speeds[i-1]<d$speedLimit*1.1+2) col<-"orange"
-          else col<-"red"
+          else {
+            if (fullresult$speeds[i-1]<d$speedLimit+10) col<-"red"
+            else col<-"purple"
+          }
         }
         g<-addG(g,dataPolygon(result,colour=NA,fill=col,alpha=fullresult$counts[direction,i-1]/100))
       }

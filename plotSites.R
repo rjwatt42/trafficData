@@ -15,6 +15,7 @@ plotSites<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
       fullresult<-getSpeeds(input,d$values)
       switch(filter,
              "green"={use<-1:length(fullresult$speeds)},
+             "purple"=use<-which(fullresult$speeds>=(d$speedLimit+10)),
              "red"=use<-which(fullresult$speeds>=(d$speedLimit*1.1+2)),
              "orange"=use<-which(fullresult$speeds>=(d$speedLimit))
       )
@@ -46,14 +47,14 @@ plotSites<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
       d<-data[[paste0("s",site)]]
       fullresult<-getSpeeds(input,d$values)
       if (showNumbers) {
-        mins<-c(0,d$speedLimit,d$speedLimit*1.1+2)
-        maxs<-c(d$speedLimit,d$speedLimit*1.1+2,100)
-        cols<-c("green","orange","red")
+        mins<-c(0,d$speedLimit,d$speedLimit*1.1+2,d$speedLimit+10)
+        maxs<-c(d$speedLimit,d$speedLimit*1.1+2,d$speedLimit+10,100)
+        cols<-c("green","orange","red","purple")
         for (direction in 1:2) {
           sn<-(direction-1.5)
           v<-sum(fullresult$counts[direction,])
           g<-addG(g,dataText(data.frame(x=site,y=6*sn),label=format(v,digits=1),colour="white",hjust=0.5,vjust=0.5))
-          for (i in 1:3) {
+          for (i in 1:4) {
             use<-fullresult$speeds>=mins[i] & fullresult$speeds<maxs[i]
             v<-sum(fullresult$counts[direction,use])
             g<-addG(g,dataText(data.frame(x=site,y=i*sn),label=format(v,digits=1),colour=cols[i],hjust=0.5,vjust=0.5))
@@ -126,7 +127,10 @@ plotSites<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
         if (fullresult$speeds[i-1]<d$speedLimit) col<-"green"
         else {
           if (fullresult$speeds[i-1]<d$speedLimit*1.1+2) col<-"orange"
-          else col<-"red"
+          else {
+            if (fullresult$speeds[i-1]<d$speedLimit+10) col<-"red"
+            else col<-"purple"
+          }
         }
         g<-addG(g,dataPolygon(result,colour=NA,fill=col,alpha=fullresult$counts[direction,i-1]/100))
       }
