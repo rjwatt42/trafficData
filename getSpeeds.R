@@ -1,11 +1,15 @@
 getSpeeds<-function(input,data) {
   
-  if (input$whichDay=="Average") day<-1:7
+  if (input$whichDay=="all days") day<-1:7
   else day<-which(input$whichDay==c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"))
-  if (input$whichTime=="Average") time<-0:23
+  if (input$whichTime=="all times") time<-0:23
   else time<-as.numeric(input$whichTime)
-  if (input$whichSite=="All") site<-1:9
-  else site<-as.numeric(input$whichSite)
+  
+  site<-NULL
+  if (input$whichSite=="all") site<-1:9
+  if (input$whichSite=="all20") site<-3:6
+  if (input$whichSite=="all30") site<-c(1:2,7:9)
+  if (is.null(site)) site<-as.numeric(input$whichSite)
   
   allspeeds<-matrix(seq(5,60,5),1)
   allspeeds[1]<-0
@@ -47,4 +51,26 @@ getSpeeds<-function(input,data) {
   }
   
   return(list(speeds=speeds[1,],counts=counts,speedLimit=speedLimits[1,]))
+}
+
+
+speedUpperBand<-function(speedLimit,band) {
+  switch(band,
+         "green"=use<-speedLimit,
+         "black"=use<-speedLimit+50,
+         "purple"=use<-speedLimit+20,
+         "red"=use<-speedLimit+10,
+         "orange"=use<-speedLimit*1.1+2
+  )
+  return(use)
+}
+speedLowerBand<-function(speedLimit,band) {
+  switch(band,
+         "green"=use<-0,
+         "black"=use<-speedLimit+20,
+         "purple"=use<-speedLimit+10,
+         "red"=use<-speedLimit*1.1+2,
+         "orange"=use<-speedLimit
+  )
+  return(use)
 }

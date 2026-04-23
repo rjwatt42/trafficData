@@ -1,12 +1,13 @@
 plotTimes<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showNumbers=FALSE) {
   
   xlim<-c(-1,24)
-  if (input$whichSite=="All") {
-    sites<-1:9
-    volume<-TRUE
-  } else 
-  sites<-as.numeric(input$whichSite)
-  
+  sites<-NULL
+  if (input$whichSite=="all") sites<-1:9
+  if (input$whichSite=="all20") sites<-3:6
+  if (input$whichSite=="all30") sites<-c(1:2,7:9)
+  if (is.null(sites)) sites<-as.numeric(input$whichSite)
+  if (length(sites)>1)   volume<-TRUE
+
   
   if (volume) {
     volumes<-matrix(0,2,24)
@@ -15,6 +16,7 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
       fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time,whichSite=site),data)
       switch(filter,
              "green"={use<-rep(TRUE,length(fullresult$speeds))},
+             "black"=use<-(fullresult$speeds>=(fullresult$speedLimit+20)),
              "purple"=use<-(fullresult$speeds>=(fullresult$speedLimit+10)),
              "red"=use<-(fullresult$speeds>=(fullresult$speedLimit*1.1+2)),
              "orange"=use<-(fullresult$speeds>=(fullresult$speedLimit))
@@ -43,9 +45,6 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
                    top=1
       )
     }
-    if (input$whichDay=="Average") 
-      g<-addG(g,plotTitle(paste0("site:",input$whichSite," on ","average day")))
-    else
       g<-addG(g,plotTitle(paste0("site:",input$whichSite," on ",input$whichDay)))
     
     for (time in 0:23) {
@@ -71,9 +70,6 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
                ylabel="Speed",yticks=list(breaks=NULL,labels=NULL,logScale=FALSE),
                top=1
   )
-  if (input$whichDay=="Average") 
-    g<-addG(g,plotTitle(paste0("site:",input$whichSite," on ","average day")))
-  else
     g<-addG(g,plotTitle(paste0("site:",input$whichSite," on ",input$whichDay)))
   means<-matrix(0,2,24)
   for (time in 0:23) {

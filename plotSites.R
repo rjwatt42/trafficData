@@ -2,10 +2,7 @@ plotSites<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
   
   xlim<-c(0,10)
   
-  if (input$whichDay=="Average") title<-"Average day at "
-  else title<-paste0(input$whichDay," at ")
-  if (input$whichTime=="Average") title<-paste0(title,"average time")
-  else title<-paste0(title,input$whichTime)
+  title<-paste0(input$whichDay," at ",input$whichTime)
   
   
   if (volume) {

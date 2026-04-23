@@ -20,6 +20,7 @@ plotBars<-function(fullresult,volumes,item,filter,doPercent,g) {
   for (direction in 1:2) {
     switch(filter,
            "green"={use<-rep(TRUE,length(fullresult$speeds))},
+           "black"=use<-(fullresult$speeds>=(fullresult$speedLimit+20)),
            "purple"=use<-(fullresult$speeds>=(fullresult$speedLimit+10)),
            "red"=use<-(fullresult$speeds>=(fullresult$speedLimit*1.1+2)),
            "orange"=use<-(fullresult$speeds>=(fullresult$speedLimit))
@@ -29,8 +30,13 @@ plotBars<-function(fullresult,volumes,item,filter,doPercent,g) {
     else ygain<-1
     volume1<-sum(fullresult$counts[direction,use])
     v<-data.frame(y=ybase*ygain*volume1,x=c(0,0,1,1)+(item-0.5))
-    g<-addG(g,dataPolygon(v,fill="purple",colour=NA))
-    if (filter!="purple") {
+    g<-addG(g,dataPolygon(v,fill="black",colour=NA))
+    if (filter!="black") {
+      use<-use & fullresult$speeds<(fullresult$speedLimit+20)
+      volume2<-sum(fullresult$counts[direction,use])
+      v<-data.frame(y=ybase*volume2*ygain,x=c(0,0,1,1)+(item-0.5))
+      g<-addG(g,dataPolygon(v,fill="purple",colour=NA))
+      if (filter!="purple") {
         use<-use & fullresult$speeds<(fullresult$speedLimit+10)
         volume2<-sum(fullresult$counts[direction,use])
         v<-data.frame(y=ybase*volume2*ygain,x=c(0,0,1,1)+(item-0.5))
@@ -47,6 +53,7 @@ plotBars<-function(fullresult,volumes,item,filter,doPercent,g) {
             g<-addG(g,dataPolygon(v,fill="green",colour=NA))
         }
         }
+      }
       }
     }
   return(g)

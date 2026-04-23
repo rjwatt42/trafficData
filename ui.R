@@ -58,11 +58,11 @@ ui <- fluidPage(
                   tags$table(width="100%",class="MyTable",
                              tags$tr(
                                tags$td(width = "60%", tags$div(style=localStyle,'site:')),
-                               tags$td(width = "40%", selectInput("whichSite", NULL,c(format(1:9),"All"),selected = "1",selectize=FALSE))
+                               tags$td(width = "40%", selectInput("whichSite", NULL,c(format(1:9),"all20","all30","all"),selected = "1",selectize=FALSE))
                              ),
                              tags$tr(
                                tags$td(width = "60%", tags$div(style=localStyle,'day:')),
-                               tags$td(width = "40%", selectInput("whichDay", NULL,c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday","Average"),selected = "Monday",selectize=FALSE))
+                               tags$td(width = "40%", selectInput("whichDay", NULL,c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday","all days"),selected = "Monday",selectize=FALSE))
                              ),
                              # tags$tr(
                              #   tags$td(width = "70%", tags$div(style=localStyle,'direction:')),
@@ -70,7 +70,7 @@ ui <- fluidPage(
                              # ),
                              tags$tr(
                                tags$td(width = "60%", tags$div(style=localStyle,'time:')),
-                               tags$td(width = "40%", selectInput("whichTime", NULL,c(paste0(format(0:23),".00"),"Average"),selected = " 9.00",selectize=FALSE))
+                               tags$td(width = "40%", selectInput("whichTime", NULL,c(paste0(format(0:23),".00"),"all times"),selected = " 9.00",selectize=FALSE))
                              )
                   )
         ),
@@ -82,7 +82,7 @@ ui <- fluidPage(
                              ),
                              tags$tr(
                                tags$td(width = "60%", tags$div(style=localStyle,'filter:')),
-                               tags$td(width = "40%", selectInput("filter", NULL,c("green","orange","red","purple"), selected="green",selectize=FALSE))
+                               tags$td(width = "40%", selectInput("filter", NULL,c("green","orange","red","purple","black"), selected="green",selectize=FALSE))
                              )
                              ,
                              tags$tr(

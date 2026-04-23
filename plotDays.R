@@ -38,9 +38,6 @@ plotDays<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showNu
                    top=1
       )
     }         
-    if (input$whichTime=="Average") 
-      g<-addG(g,plotTitle(paste0("site:",input$whichSite," at ","average time")))
-    else
       g<-addG(g,plotTitle(paste0("site:",input$whichSite," at ",input$whichTime)))
     
     for (day in 1:7) {
@@ -67,9 +64,6 @@ plotDays<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showNu
                ylabel="Speed",yticks=list(breaks=NULL,labels=NULL,logScale=FALSE),
                top=1
   )
-  if (input$whichTime=="Average") 
-    g<-addG(g,plotTitle(paste0("site:",input$whichSite," at ","average time")))
-  else
     g<-addG(g,plotTitle(paste0("site:",input$whichSite," at ",input$whichTime)))
   d<-data[[paste0("s",site)]]
   for (day in 1:7) {
