@@ -19,7 +19,7 @@ openTab<-1
 startTab<-0
 
 server <- function(input, output) {
-  BrawOpts(graphicsType = "HTML")
+  BrawOpts(graphicsType = "HTML",graphBack="#DDD")
   svgBox(height=450,aspect=1.33)
   
   openTab<<-1
@@ -53,7 +53,7 @@ server <- function(input, output) {
   
   
   observeEvent({c(input$whichSite,input$whichDay,input$whichTime,
-                  input$plotType,input$filter)}, 
+                  input$plotType,input$filter,input$percent)}, 
     {
       if (input$plotType=="f(sites)") shinyjs::disable("whichSite")
       else shinyjs::enable("whichSite")
@@ -70,18 +70,18 @@ server <- function(input, output) {
                },
              "f(sites)" ={
                g1<-plotSites(input,maintrafficdata)
-               g2<-plotSites(input,maintrafficdata,volume=TRUE,filter=input$filter)
+               g2<-plotSites(input,maintrafficdata,volume=TRUE,filter=input$filter,doPercent=(input$percent=="percents"))
                g3<-plotSites(input,maintrafficdata,volume=TRUE,showNumbers=TRUE)
              },
              "f(days)"  ={
                g1<-plotDays(input,maintrafficdata)
-               g2<-plotDays(input,maintrafficdata,volume=TRUE,filter=input$filter)
+               g2<-plotDays(input,maintrafficdata,volume=TRUE,filter=input$filter,doPercent=(input$percent=="percents"))
                g3<-plotDays(input,maintrafficdata,volume=TRUE,showNumbers=TRUE)
              },
              "f(times)" ={
                g1<-plotTimes(input,maintrafficdata)
-               g2<-plotTimes(input,maintrafficdata,volume=TRUE,filter=input$filter)
-               g3<-plotTimes(input,maintrafficdata,volume=TRUE,showNumbers=TRUE)
+               g2<-plotTimes(input,maintrafficdata,volume=TRUE,filter=input$filter,doPercent=(input$percent=="percents"))
+               g3<-g2 #plotTimes(input,maintrafficdata,volume=TRUE,showNumbers=TRUE)
              }
              )
 

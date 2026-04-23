@@ -38,7 +38,8 @@ newBrawDev<-function(fontScale=1,height=1000,aspect=1) {
 }
 
 #' @export
-BrawOpts<-function(BW=FALSE,graphC="transparent",fontScale=1,graphicsSize=c(16,10),
+BrawOpts<-function(BW=FALSE,graphC="transparent",graphBack="#999999",
+                   fontScale=1,graphicsSize=c(16,10),
                    reportHTML=FALSE, graphicsType="ggplot", reportFontSize=0.85, 
                    colBlind=FALSE,graphOrientation="vert",
                    newDev=FALSE,height=400,aspect=1.3,autoShow=FALSE,autoPrint=FALSE,timeLimit=Inf,fullGraphSize=1,
@@ -88,7 +89,7 @@ BrawOpts<-function(BW=FALSE,graphC="transparent",fontScale=1,graphicsSize=c(16,1
   isigNullCol<-darken(sigCol,off=0.5)
   isigNonNullCol<-darken(nsCol,off=0.5)
   # graph themes
-  plotColours<-list(graphC=graphC,graphBack="#999999",
+  plotColours<-list(graphC=graphC,graphBack=graphBack,
                     variableC="#FFCC00",maineffectES="#DD8844",covariationES="#FF1100",interactionES="#0011FF",
                     populationC="#FFCC00",sampleC="#FFCC00",descriptionC="#DD8844",
                     designC="#CCDD00",replicationC="#FF7755",

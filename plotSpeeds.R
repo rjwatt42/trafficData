@@ -1,18 +1,18 @@
 plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showNumbers=FALSE) {
   
   d<-data[[paste0("s",input$whichSite)]]
-  fullresult<-getSpeeds(input,d$values)
-  
+  fullresult<-getSpeeds(input,data)
+
   if (volume) {
     volumes<-matrix(0,2,1)
     site<-as.numeric(input$whichSite)
       d<-data[[paste0("s",site)]]
-      fullresult<-getSpeeds(input,d$values)
+      fullresult<-getSpeeds(input,data)
       switch(filter,
              "green"={use<-1:length(fullresult$speeds)},
-             "purple"=use<-which(fullresult$speeds>=(d$speedLimit+10)),
-             "red"=use<-which(fullresult$speeds>=(d$speedLimit*1.1+2)),
-             "orange"=use<-which(fullresult$speeds>=(d$speedLimit))
+             "purple"=use<-which(fullresult$speeds>=(fullresult$speedLimit+10)),
+             "red"=use<-which(fullresult$speeds>=(fullresult$speedLimit*1.1+2)),
+             "orange"=use<-which(fullresult$speeds>=(fullresult$speedLimit))
       )
       for (direction in 1:2) {
         volumes[direction,1]<-sum(fullresult$counts[direction,use])
@@ -39,10 +39,10 @@ plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showN
     g<-addG(g,plotTitle(paste0("site:",input$whichSite," on ",input$whichDay," at ",input$whichTime)))
     
       d<-data[[paste0("s",site)]]
-      fullresult<-getSpeeds(input,d$values)
+      fullresult<-getSpeeds(input,data)
       if (showNumbers) {
-        mins<-c(0,d$speedLimit,d$speedLimit*1.1+2)
-        maxs<-c(d$speedLimit,d$speedLimit*1.1+2,100)
+        mins<-c(0,fullresult$speedLimit,fullresult$speedLimit*1.1+2)
+        maxs<-c(fullresult$speedLimit,fullresult$speedLimit*1.1+2,100)
         cols<-c("green","orange","red","purple")
         for (direction in 1:2) {
           sn<-(direction-1.5)
@@ -60,8 +60,8 @@ plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showN
         v<-data.frame(y=c(0,1,1,0)*volumes[2,1],x=c(0,0,1,1)+(site-0.5))
         g<-addG(g,dataPolygon(v,fill="purple",colour=NA))
         if (filter!="purple") {
-          use<-fullresult$speeds<(d$speedLimit+10)
-          if (filter=="red") use<-use & fullresult$speeds>=(d$speedLimit)
+          use<-fullresult$speeds<(fullresult$speedLimit+10)
+          if (filter=="red") use<-use & fullresult$speeds>=(fullresult$speedLimit)
           for (direction in 1:2) {
             volumes[direction,1]<-sum(fullresult$counts[direction,use])
           }
@@ -70,8 +70,8 @@ plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showN
           v<-data.frame(y=c(0,1,1,0)*volumes[2,1],x=c(0,0,1,1)+(site-0.5))
           g<-addG(g,dataPolygon(v,fill="red",colour=NA))
           if (filter!="red") {
-            use<-fullresult$speeds<(d$speedLimit*1.1+2)
-            if (filter=="orange") use<-use & fullresult$speeds>=(d$speedLimit)
+            use<-fullresult$speeds<(fullresult$speedLimit*1.1+2)
+            if (filter=="orange") use<-use & fullresult$speeds>=(fullresult$speedLimit)
             for (direction in 1:2) {
               volumes[direction,1]<-sum(fullresult$counts[direction,use])
             }
@@ -80,7 +80,7 @@ plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showN
             v<-data.frame(y=c(0,1,1,0)*volumes[2,1],x=c(0,0,1,1)+(site-0.5))
             g<-addG(g,dataPolygon(v,fill="orange",colour=NA))
             if (filter!="orange") {
-              use<-fullresult$speeds<d$speedLimit
+              use<-fullresult$speeds<fullresult$speedLimit
               for (direction in 1:2) {
               volumes[direction,1]<-sum(fullresult$counts[direction,use])
             }
@@ -99,7 +99,6 @@ plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showN
     return(g)
   } 
 
-  
   xlim<-c(0,max(fullresult$speeds)*1.05)
   
   if (is.na(fixedLimits) || fixedLimits==0)
@@ -116,20 +115,20 @@ plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showN
   for (direction in 1:2) {
   result<-data.frame(x=fullresult$speeds,y=fullresult$counts[direction,])
   if (direction==1) result$y<- - result$y
-  
-  use1<-max(which(result$x<=d$speedLimit))-1
+
+  use1<-max(which(result$x<=fullresult$speedLimit))-1
   for (i in 1:use1) {
     x<-c(result$x[i],result$x[i],result$x[i+1],result$x[i+1])
     y<-c(0,result$y[i],result$y[i],0)
     g<-addG(g,dataPolygon(data.frame(x=x,y=y),colour="none",fill="green"))
   }
-  use2<-max(which(result$x<=(d$speedLimit*1.1+3)))-1
+  use2<-max(which(result$x<=(fullresult$speedLimit*1.1+3)))-1
   for (i in (use1+1):use2) {
     x<-c(result$x[i],result$x[i],result$x[i+1],result$x[i+1])
     y<-c(0,result$y[i],result$y[i],0)
     g<-addG(g,dataPolygon(data.frame(x=x,y=y),colour="none",fill="orange"))
   }
-  use3<-max(which(result$x<=(d$speedLimit+10)))-1
+  use3<-max(which(result$x<=(fullresult$speedLimit+10)))-1
   for (i in (use2+1):use3) {
     x<-c(result$x[i],result$x[i],result$x[i+1],result$x[i+1])
     y<-c(0,result$y[i],result$y[i],0)

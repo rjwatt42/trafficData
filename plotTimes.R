@@ -1,38 +1,45 @@
-plotTimes<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
+plotTimes<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showNumbers=FALSE) {
   
   xlim<-c(-1,24)
-  site<-as.numeric(input$whichSite)
+  if (input$whichSite=="All") {
+    sites<-1:9
+    volume<-TRUE
+  } else 
+  sites<-as.numeric(input$whichSite)
+  
   
   if (volume) {
     volumes<-matrix(0,2,24)
-    d<-data[[paste0("s",site)]]
+    for (site in sites){
     for (time in 0:23) {
-      fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time),d$values)
+      fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time,whichSite=site),data)
       switch(filter,
              "green"={use<-rep(TRUE,length(fullresult$speeds))},
-             "purple"=use<-(fullresult$speeds>=(d$speedLimit+10)),
-             "red"=use<-(fullresult$speeds>=(d$speedLimit*1.1+2)),
-             "orange"=use<-(fullresult$speeds>=(d$speedLimit))
+             "purple"=use<-(fullresult$speeds>=(fullresult$speedLimit+10)),
+             "red"=use<-(fullresult$speeds>=(fullresult$speedLimit*1.1+2)),
+             "orange"=use<-(fullresult$speeds>=(fullresult$speedLimit))
       )
       for (direction in 1:2) {
-        volumes[direction,time+1]<-sum(fullresult$counts[direction,use])
+        volumes[direction,time+1]<-volumes[direction,time+1]+sum(fullresult$counts[direction,use])
       }
+    }
     }
     
     if (showNumbers) {
       ylim<-c(-5,5)
       g<-startPlot(xlim=xlim,
                    ylim=ylim,
-                   xlabel="Time",xticks=seq(0,24,4),
+                   xlabel="Time of Day",xticks=list(breaks=seq(0,25,4),labels=paste0(seq(0,25,4),":00"),logScale=FALSE),
                    ylabel="Volume",yticks=list(breaks=0,labels=" ",logScale=FALSE),
                    box="x",top=1
       )
     } else  {
-      ylim<-c(-1,1)*max(500,max(volumes,na.rm=TRUE))
+      if (doPercent) {ylim<-c(-1,1)*100;ylabel<-"Percent"}
+      else           {ylim<-c(-1,1)*max(100,max(volumes,na.rm=TRUE)*1.05);ylabel<-"Volume"}
       g<-startPlot(xlim=xlim,
                    ylim=ylim,
-                   xlabel="Time",xticks=seq(0,24,4),
-                   ylabel="Volume",yticks=list(breaks=NULL,labels=NULL,logScale=FALSE),
+                   xlabel="Time of Day",xticks=list(breaks=seq(0,25,4),labels=paste0(seq(0,25,4),":00"),logScale=FALSE),
+                   ylabel=ylabel,yticks=list(breaks=NULL,labels=NULL,logScale=FALSE),
                    top=1
       )
     }
@@ -42,11 +49,11 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
       g<-addG(g,plotTitle(paste0("site:",input$whichSite," on ",input$whichDay)))
     
     for (time in 0:23) {
-      fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time),d$values)
+      fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time,whichSite=input$whichSite),data)
       if (showNumbers) {
         g<-plotNumbers(d,fullresult,time,g)
       } else {
-        g<-plotBars(d,fullresult,volumes,time+1,filter,g)
+        g<-plotBars(fullresult,volumes,time+1,filter,doPercent=doPercent,g)
       }
     }
     g<-addG(g,dataLine(data.frame(x=xlim,y=c(0,0)),colour="grey"))
@@ -60,7 +67,7 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
   
   g<-startPlot(xlim=xlim,
                ylim=ylim,
-               xlabel="Time",xticks=seq(0,24,4),
+               xlabel="Time of Day",xticks=list(breaks=seq(0,25,4),labels=paste0(seq(0,25,4),":00"),logScale=FALSE),
                ylabel="Speed",yticks=list(breaks=NULL,labels=NULL,logScale=FALSE),
                top=1
   )
@@ -68,21 +75,20 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
     g<-addG(g,plotTitle(paste0("site:",input$whichSite," on ","average day")))
   else
     g<-addG(g,plotTitle(paste0("site:",input$whichSite," on ",input$whichDay)))
-  d<-data[[paste0("s",site)]]
   means<-matrix(0,2,24)
   for (time in 0:23) {
-    fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time),d$values)
+    fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time,whichSite=input$whichSite),data)
     for (direction in 1:2) {
       for (i in 2:length(fullresult$speeds)) {
         result<-data.frame(y=c(0,0,1,1)*fullresult$speeds[i-1]+c(1,1,0,0)*fullresult$speeds[i],
                            x=time+c(-0.5,0.5,0.5,-0.5)
         )
         if (direction==1) result$y<- - result$y
-        if (fullresult$speeds[i-1]<d$speedLimit) col<-"green"
+        if (fullresult$speeds[i-1]<fullresult$speedLimit[i-1]) col<-"green"
         else {
-          if (fullresult$speeds[i-1]<d$speedLimit*1.1+2) col<-"orange"
+          if (fullresult$speeds[i-1]<fullresult$speedLimit[i-1]*1.1+2) col<-"orange"
           else {
-            if (fullresult$speeds[i-1]<d$speedLimit+10) col<-"red"
+            if (fullresult$speeds[i-1]<fullresult$speedLimit[i-1]+10) col<-"red"
             else col<-"purple"
           }
         }
@@ -91,13 +97,13 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
       meanSpeed<-sum(fullresult$speeds*fullresult$counts[direction,])/sum(fullresult$counts[direction,])
       means[direction,time+1]<-meanSpeed
       if (showNumbers) {
-        use<-fullresult$speeds>=(d$speedLimit*1.1+2)
+        use<-fullresult$speeds>=(fullresult$speedLimit*1.1+2)
         hmm<-sum(fullresult$counts[direction,use])
         if (direction==2) 
           g<-addG(g,dataText(data.frame(x=time,y=ylim[2]),hmm,hjust=0.5,vjust=1,colour="#c00",size=0.75,fontface="bold"))
         else
           g<-addG(g,dataText(data.frame(x=time,y=ylim[1]),hmm,hjust=0.5,colour="#c00",size=0.75,fontface="bold"))
-        use<-fullresult$speeds<(d$speedLimit*1.1+2) & fullresult$speeds>=d$speedLimit
+        use<-fullresult$speeds<(fullresult$speedLimit*1.1+2) & fullresult$speeds>=fullresult$speedLimit
         hmm<-sum(fullresult$counts[direction,use])
         if (direction==2) 
           g<-addG(g,dataText(data.frame(x=time,y=ylim[2]-diff(ylim)/20),hmm,hjust=0.5,vjust=1,colour="#ca0",size=0.75,fontface="bold"))

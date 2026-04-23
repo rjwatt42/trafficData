@@ -1,4 +1,4 @@
-plotDays<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
+plotDays<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showNumbers=FALSE) {
   
   site<-as.numeric(input$whichSite)
   
@@ -9,12 +9,12 @@ plotDays<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
     d<-data[[paste0("s",site)]]
     for (day in 1:7) {
       whichDay<-c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday")[day]
-      fullresult<-getSpeeds(list(whichDay=whichDay,whichTime=input$whichTime),d$values)
+      fullresult<-getSpeeds(list(whichDay=whichDay,whichTime=input$whichTime,whichSite=input$whichSite),data)
       switch(filter,
              "green"={use<-rep(TRUE,length(fullresult$speeds))},
-             "purple"=use<-(fullresult$speeds>=(d$speedLimit+10)),
-             "red"=use<-(fullresult$speeds>=(d$speedLimit*1.1+2)),
-             "orange"=use<-(fullresult$speeds>=(d$speedLimit))
+             "purple"=use<-(fullresult$speeds>=(fullresult$speedLimit+10)),
+             "red"=use<-(fullresult$speeds>=(fullresult$speedLimit*1.1+2)),
+             "orange"=use<-(fullresult$speeds>=(fullresult$speedLimit))
       )
       for (direction in 1:2) {
         volumes[direction,day]<-sum(fullresult$counts[direction,use])
@@ -29,11 +29,12 @@ plotDays<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
                    box="x",top=1
       )
     } else  {
-      ylim<-c(-1,1)*max(500,max(volumes,na.rm=TRUE))
+      if (doPercent) {ylim<-c(-1,1)*100;ylabel<-"Percent"}
+      else           {ylim<-c(-1,1)*max(500,max(volumes,na.rm=TRUE));ylabel<-"Volume"}
       g<-startPlot(xlim=xlim,
                    ylim=ylim,
                    xlabel="Day",xticks=list(breaks=1:7,labels=c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"),logScale=FALSE),
-                   ylabel="Volume",yticks=list(breaks=NULL,labels=NULL,logScale=FALSE),
+                   ylabel=ylabel,yticks=list(breaks=NULL,labels=NULL,logScale=FALSE),
                    top=1
       )
     }         
@@ -44,11 +45,11 @@ plotDays<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
     
     for (day in 1:7) {
       whichDay<-c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday")[day]
-      fullresult<-getSpeeds(list(whichDay=whichDay,whichTime=input$whichTime),d$values)
+      fullresult<-getSpeeds(list(whichDay=whichDay,whichTime=input$whichTime,whichSite=input$whichSite),data)
       if (showNumbers) {
         g<-plotNumbers(d,fullresult,day,g)
       } else {
-        g<-plotBars(d,fullresult,volumes,day,filter,g)
+        g<-plotBars(fullresult,volumes,day,filter,doPercent=doPercent,g)
       }
     }
     g<-addG(g,dataLine(data.frame(x=xlim,y=c(0,0)),colour="grey"))
@@ -73,31 +74,31 @@ plotDays<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
   d<-data[[paste0("s",site)]]
   for (day in 1:7) {
     whichDay<-c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday")[day]
-    fullresult<-getSpeeds(list(whichDay=whichDay,whichTime=input$whichTime),d$values)
+    fullresult<-getSpeeds(list(whichDay=whichDay,whichTime=input$whichTime,whichSite=input$whichSite),data)
     for (direction in 1:2) {
       for (i in 2:length(fullresult$speeds)) {
         result<-data.frame(y=c(0,0,1,1)*fullresult$speeds[i-1]+c(1,1,0,0)*fullresult$speeds[i],
                            x=day+c(-0.5,0.5,0.5,-0.5)
         )
         if (direction==1) result$y<- - result$y
-        if (fullresult$speeds[i-1]<d$speedLimit) col<-"green"
+        if (fullresult$speeds[i-1]<fullresult$speedLimit[i-1]) col<-"green"
         else {
-          if (fullresult$speeds[i-1]<d$speedLimit*1.1+2) col<-"orange"
+          if (fullresult$speeds[i-1]<fullresult$speedLimit[i-1]*1.1+2) col<-"orange"
           else {
-            if (fullresult$speeds[i-1]<d$speedLimit+10) col<-"red"
+            if (fullresult$speeds[i-1]<fullresult$speedLimit[i-1]+10) col<-"red"
             else col<-"purple"
           }
         }
         g<-addG(g,dataPolygon(result,colour=NA,fill=col,alpha=fullresult$counts[direction,i-1]/100))
       }
       if (showNumbers) {
-        use<-fullresult$speeds>=(d$speedLimit*1.1+2)
+        use<-fullresult$speeds>=(fullresult$speedLimit*1.1+2)
         hmm<-sum(fullresult$counts[direction,use])
         if (direction==2) 
           g<-addG(g,dataText(data.frame(x=day,y=ylim[2]),hmm,hjust=0.5,vjust=1,colour="#c00",size=0.75,fontface="bold"))
         else
           g<-addG(g,dataText(data.frame(x=day,y=ylim[1]),hmm,hjust=0.5,colour="#c00",size=0.75,fontface="bold"))
-        use<-fullresult$speeds<(d$speedLimit*1.1+2) & fullresult$speeds>=d$speedLimit
+        use<-fullresult$speeds<(fullresult$speedLimit*1.1+2) & fullresult$speeds>=fullresult$speedLimit
         hmm<-sum(fullresult$counts[direction,use])
         if (direction==2) 
           g<-addG(g,dataText(data.frame(x=day,y=ylim[2]-diff(ylim)/20),hmm,hjust=0.5,vjust=1,colour="#ca0",size=0.75,fontface="bold"))

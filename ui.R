@@ -58,7 +58,7 @@ ui <- fluidPage(
                   tags$table(width="100%",class="MyTable",
                              tags$tr(
                                tags$td(width = "60%", tags$div(style=localStyle,'site:')),
-                               tags$td(width = "40%", selectInput("whichSite", NULL,c(format(1:9)),selected = "1",selectize=FALSE))
+                               tags$td(width = "40%", selectInput("whichSite", NULL,c(format(1:9),"All"),selected = "1",selectize=FALSE))
                              ),
                              tags$tr(
                                tags$td(width = "60%", tags$div(style=localStyle,'day:')),
@@ -83,6 +83,11 @@ ui <- fluidPage(
                              tags$tr(
                                tags$td(width = "60%", tags$div(style=localStyle,'filter:')),
                                tags$td(width = "40%", selectInput("filter", NULL,c("green","orange","red","purple"), selected="green",selectize=FALSE))
+                             )
+                             ,
+                             tags$tr(
+                               tags$td(width = "60%", tags$div(style=localStyle,'show:')),
+                               tags$td(width = "40%", selectInput("percent", NULL,c("counts","percents"),selectize=FALSE))
                              )
                              # ,tags$tr(
                              #   tags$td(width = "60%", tags$div(style=localStyle,'graph limits:')),
