@@ -9,9 +9,10 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
     for (time in 0:23) {
       fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time),d$values)
       switch(filter,
-             "green"={use<-1:length(fullresult$speeds)},
-             "red"=use<-which(fullresult$speeds>=(d$speedLimit*1.1+2)),
-             "orange"=use<-which(fullresult$speeds>=(d$speedLimit))
+             "green"={use<-rep(TRUE,length(fullresult$speeds))},
+             "purple"=use<-(fullresult$speeds>=(d$speedLimit+10)),
+             "red"=use<-(fullresult$speeds>=(d$speedLimit*1.1+2)),
+             "orange"=use<-(fullresult$speeds>=(d$speedLimit))
       )
       for (direction in 1:2) {
         volumes[direction,time+1]<-sum(fullresult$counts[direction,use])
@@ -42,6 +43,12 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
     
     for (time in 0:23) {
       fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time),d$values)
+      switch(filter,
+             "green"={use<-rep(TRUE,length(fullresult$speeds))},
+             "purple"=use<-(fullresult$speeds>=(d$speedLimit+10)),
+             "red"=use<-(fullresult$speeds>=(d$speedLimit*1.1+2)),
+             "orange"=use<-(fullresult$speeds>=(d$speedLimit))
+      )
       if (showNumbers) {
         mins<-c(0,d$speedLimit,d$speedLimit*1.1+2)
         maxs<-c(d$speedLimit,d$speedLimit*1.1+2,100)
@@ -64,8 +71,7 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
         if (filter!="purple") {
           for (direction in 1:2) {
             fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time),d$values)
-            use<-fullresult$speeds<(d$speedLimit+10)
-            if (filter=="red") use<-use & fullresult$speeds>=(d$speedLimit)
+            use<-use & fullresult$speeds<(d$speedLimit+10)
             volumes[direction,time+1]<-sum(fullresult$counts[direction,use])
           }
           v<-data.frame(y=-c(0,1,1,0)*volumes[1,time+1],x=c(0,0,1,1)+(time-0.5))
@@ -75,8 +81,7 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
           if (filter!="red") {
             for (direction in 1:2) {
               fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time),d$values)
-              use<-fullresult$speeds<(d$speedLimit*1.1+2)
-              if (filter=="orange") use<-use & fullresult$speeds>=(d$speedLimit)
+              use<-use & fullresult$speeds<(d$speedLimit*1.1+2)
               volumes[direction,time+1]<-sum(fullresult$counts[direction,use])
             }
             v<-data.frame(y=-c(0,1,1,0)*volumes[1,time+1],x=c(0,0,1,1)+(time-0.5))
@@ -86,7 +91,7 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
           if (filter!="orange") {
             for (direction in 1:2) {
               fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time),d$values)
-              use<-fullresult$speeds<d$speedLimit
+              use<-use & fullresult$speeds<d$speedLimit
               volumes[direction,time+1]<-sum(fullresult$counts[direction,use])
             }
             v<-data.frame(y=-c(0,1,1,0)*volumes[1,time+1],x=c(0,0,1,1)+(time-0.5))

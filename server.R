@@ -84,7 +84,8 @@ server <- function(input, output) {
              }
              )
 
-      g4<-'<img src="www/map.png">'
+      url2<-"https://github.com/rjwatt42/trafficData/raw/refs/heads/main/www/map.png"
+      g4<-paste0('<img src="',url2,'" width=598>')
       g<-generate_tab("Graphs: ",titleWidth=50,
                       tabs=c("Traffic Speed","Traffic Volume","Data","Map"),
                       tabContents=c(g1,g2,g3,g4),

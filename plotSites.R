@@ -14,10 +14,10 @@ plotSites<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
       d<-data[[paste0("s",site)]]
       fullresult<-getSpeeds(input,d$values)
       switch(filter,
-             "green"={use<-1:length(fullresult$speeds)},
-             "purple"=use<-which(fullresult$speeds>=(d$speedLimit+10)),
-             "red"=use<-which(fullresult$speeds>=(d$speedLimit*1.1+2)),
-             "orange"=use<-which(fullresult$speeds>=(d$speedLimit))
+             "green"={use<-rep(TRUE,length(fullresult$speeds))},
+             "purple"=use<-(fullresult$speeds>=(d$speedLimit+10)),
+             "red"=use<-(fullresult$speeds>=(d$speedLimit*1.1+2)),
+             "orange"=use<-(fullresult$speeds>=(d$speedLimit))
       )
       for (direction in 1:2) {
         volumes[direction,site]<-sum(fullresult$counts[direction,use])
@@ -46,6 +46,12 @@ plotSites<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
     for (site in 1:9) {
       d<-data[[paste0("s",site)]]
       fullresult<-getSpeeds(input,d$values)
+      switch(filter,
+             "green"={use<-rep(TRUE,length(fullresult$speeds))},
+             "purple"=use<-(fullresult$speeds>=(d$speedLimit+10)),
+             "red"=use<-(fullresult$speeds>=(d$speedLimit*1.1+2)),
+             "orange"=use<-(fullresult$speeds>=(d$speedLimit))
+      )
       if (showNumbers) {
         mins<-c(0,d$speedLimit,d$speedLimit*1.1+2,d$speedLimit+10)
         maxs<-c(d$speedLimit,d$speedLimit*1.1+2,d$speedLimit+10,100)
@@ -66,9 +72,9 @@ plotSites<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
         v<-data.frame(y=c(0,1,1,0)*volumes[2,site],x=c(0,0,1,1)+(site-0.5))
         g<-addG(g,dataPolygon(v,fill="purple",colour=NA))
         if (filter!="purple") {
+          use<-use & fullresult$speeds<(d$speedLimit+10)
+          if (site==1 && !showNumbers) print(c(2,which(use)))
           for (direction in 1:2) {
-            use<-fullresult$speeds<(d$speedLimit+10)
-            if (filter=="red") use<-use & fullresult$speeds>=(d$speedLimit)
             volumes[direction,site]<-sum(fullresult$counts[direction,use])
           }
           v<-data.frame(y=-c(0,1,1,0)*volumes[1,site],x=c(0,0,1,1)+(site-0.5))
@@ -77,8 +83,8 @@ plotSites<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
           g<-addG(g,dataPolygon(v,fill="red",colour=NA))
           if (filter!="red") {
             for (direction in 1:2) {
-              use<-fullresult$speeds<(d$speedLimit*1.1+2)
-              if (filter=="orange") use<-use & fullresult$speeds>=(d$speedLimit)
+              use<-use & fullresult$speeds<(d$speedLimit*1.1+2)
+              if (site==1 && !showNumbers) print(c(3,which(use)))
               volumes[direction,site]<-sum(fullresult$counts[direction,use])
             }
             v<-data.frame(y=-c(0,1,1,0)*volumes[1,site],x=c(0,0,1,1)+(site-0.5))
@@ -87,7 +93,7 @@ plotSites<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
             g<-addG(g,dataPolygon(v,fill="orange",colour=NA))
             if (filter!="orange") {
             for (direction in 1:2) {
-              use<-fullresult$speeds<d$speedLimit
+              use<-use & fullresult$speeds<d$speedLimit
               volumes[direction,site]<-sum(fullresult$counts[direction,use])
             }
             v<-data.frame(y=-c(0,1,1,0)*volumes[1,site],x=c(0,0,1,1)+(site-0.5))
