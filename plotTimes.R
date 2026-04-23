@@ -43,64 +43,10 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",showNumbers=FALSE) {
     
     for (time in 0:23) {
       fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time),d$values)
-      switch(filter,
-             "green"={use<-rep(TRUE,length(fullresult$speeds))},
-             "purple"=use<-(fullresult$speeds>=(d$speedLimit+10)),
-             "red"=use<-(fullresult$speeds>=(d$speedLimit*1.1+2)),
-             "orange"=use<-(fullresult$speeds>=(d$speedLimit))
-      )
       if (showNumbers) {
-        mins<-c(0,d$speedLimit,d$speedLimit*1.1+2)
-        maxs<-c(d$speedLimit,d$speedLimit*1.1+2,100)
-        cols<-c("green","orange","red")
-        for (direction in 1:2) {
-          sn<-(direction-1.5)
-          v<-sum(fullresult$counts[direction,])
-          g<-addG(g,dataText(data.frame(x=time,y=6*sn),label=format(v,digits=1),colour="white",hjust=0.5,vjust=0.5,size=0.5))
-          for (i in 1:3) {
-            use<-fullresult$speeds>=mins[i] & fullresult$speeds<maxs[i]
-            v<-sum(fullresult$counts[direction,use])
-            g<-addG(g,dataText(data.frame(x=time,y=i*sn),label=format(v,digits=1),colour=cols[i],hjust=0.5,vjust=0.5,size=0.5))
-          }
-        }
+        g<-plotNumbers(d,fullresult,time,g)
       } else {
-        v<-data.frame(y=-c(0,1,1,0)*volumes[1,time+1],x=c(0,0,1,1)+(time-0.5))
-        g<-addG(g,dataPolygon(v,fill="purple",colour=NA))
-        v<-data.frame(y=c(0,1,1,0)*volumes[2,time+1],x=c(0,0,1,1)+(time-0.5))
-        g<-addG(g,dataPolygon(v,fill="purple",colour=NA))
-        if (filter!="purple") {
-          for (direction in 1:2) {
-            fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time),d$values)
-            use<-use & fullresult$speeds<(d$speedLimit+10)
-            volumes[direction,time+1]<-sum(fullresult$counts[direction,use])
-          }
-          v<-data.frame(y=-c(0,1,1,0)*volumes[1,time+1],x=c(0,0,1,1)+(time-0.5))
-          g<-addG(g,dataPolygon(v,fill="red",colour=NA))
-          v<-data.frame(y=c(0,1,1,0)*volumes[2,time+1],x=c(0,0,1,1)+(time-0.5))
-          g<-addG(g,dataPolygon(v,fill="red",colour=NA))
-          if (filter!="red") {
-            for (direction in 1:2) {
-              fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time),d$values)
-              use<-use & fullresult$speeds<(d$speedLimit*1.1+2)
-              volumes[direction,time+1]<-sum(fullresult$counts[direction,use])
-            }
-            v<-data.frame(y=-c(0,1,1,0)*volumes[1,time+1],x=c(0,0,1,1)+(time-0.5))
-          g<-addG(g,dataPolygon(v,fill="orange",colour=NA))
-          v<-data.frame(y=c(0,1,1,0)*volumes[2,time+1],x=c(0,0,1,1)+(time-0.5))
-          g<-addG(g,dataPolygon(v,fill="orange",colour=NA))
-          if (filter!="orange") {
-            for (direction in 1:2) {
-              fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time),d$values)
-              use<-use & fullresult$speeds<d$speedLimit
-              volumes[direction,time+1]<-sum(fullresult$counts[direction,use])
-            }
-            v<-data.frame(y=-c(0,1,1,0)*volumes[1,time+1],x=c(0,0,1,1)+(time-0.5))
-            g<-addG(g,dataPolygon(v,fill="green",colour=NA))
-            v<-data.frame(y=c(0,1,1,0)*volumes[2,time+1],x=c(0,0,1,1)+(time-0.5))
-            g<-addG(g,dataPolygon(v,fill="green",colour=NA))
-          }
-          }
-        }
+        g<-plotBars(d,fullresult,volumes,time+1,filter,g)
       }
     }
     g<-addG(g,dataLine(data.frame(x=xlim,y=c(0,0)),colour="grey"))

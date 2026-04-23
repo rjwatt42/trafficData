@@ -8,6 +8,7 @@ source('plotSpeeds.R')
 source('plotSites.R')
 source('plotDays.R')
 source('plotTimes.R')
+source('trafficPlots.R')
 
 library('ggplot2')
 library('readxl')

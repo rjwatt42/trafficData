@@ -83,11 +83,11 @@ ui <- fluidPage(
                              tags$tr(
                                tags$td(width = "60%", tags$div(style=localStyle,'filter:')),
                                tags$td(width = "40%", selectInput("filter", NULL,c("green","orange","red","purple"), selected="green",selectize=FALSE))
-                             ),
-                             tags$tr(
-                               tags$td(width = "60%", tags$div(style=localStyle,'graph limits:')),
-                               tags$td(width = "40%", numericInput("fixedLimits", NULL, value=200,step=50))
                              )
+                             # ,tags$tr(
+                             #   tags$td(width = "60%", tags$div(style=localStyle,'graph limits:')),
+                             #   tags$td(width = "40%", numericInput("fixedLimits", NULL, value=200,step=50))
+                             # )
                   )
         ),
         wellPanel(tags$div(style="font-weight:bold;",'Links to Code and Data'),
