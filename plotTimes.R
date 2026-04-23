@@ -15,18 +15,18 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
     for (time in 0:23) {
       fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time,whichSite=site),data)
       switch(filter,
-             "green"={use<-rep(TRUE,length(fullresult$speeds))},
-             "black"=use<-(fullresult$speeds>=(fullresult$speedLimit+20)),
-             "purple"=use<-(fullresult$speeds>=(fullresult$speedLimit+10)),
-             "red"=use<-(fullresult$speeds>=(fullresult$speedLimit*1.1+2)),
-             "orange"=use<-(fullresult$speeds>=(fullresult$speedLimit))
+             "black"=use<-(fullresult$speeds>=speedLowerBand(fullresult$speedLimit,"black")),
+             "purple"=use<-(fullresult$speeds>=speedLowerBand(fullresult$speedLimit,"purple")),
+             "red"=use<-(fullresult$speeds>=speedLowerBand(fullresult$speedLimit,"red")),
+             "orange"=use<-(fullresult$speeds>=speedLowerBand(fullresult$speedLimit,"orange")),
+             "green"=use<-(fullresult$speeds>=speedLowerBand(fullresult$speedLimit,"green"))
       )
       for (direction in 1:2) {
         volumes[direction,time+1]<-volumes[direction,time+1]+sum(fullresult$counts[direction,use])
       }
     }
     }
-    
+
     if (showNumbers) {
       ylim<-c(-5,5)
       g<-startPlot(xlim=xlim,
@@ -93,13 +93,13 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
       meanSpeed<-sum(fullresult$speeds*fullresult$counts[direction,])/sum(fullresult$counts[direction,])
       means[direction,time+1]<-meanSpeed
       if (showNumbers) {
-        use<-fullresult$speeds>=(fullresult$speedLimit*1.1+2)
+        use<-fullresult$speeds>=speedLowerBand(fullresult$speedLimit,"red")
         hmm<-sum(fullresult$counts[direction,use])
         if (direction==2) 
           g<-addG(g,dataText(data.frame(x=time,y=ylim[2]),hmm,hjust=0.5,vjust=1,colour="#c00",size=0.75,fontface="bold"))
         else
           g<-addG(g,dataText(data.frame(x=time,y=ylim[1]),hmm,hjust=0.5,colour="#c00",size=0.75,fontface="bold"))
-        use<-fullresult$speeds<(fullresult$speedLimit*1.1+2) & fullresult$speeds>=fullresult$speedLimit
+        use<-fullresult$speeds<speedLowerBand(fullresult$speedLimit,"red") & fullresult$speeds>=fullresult$speedLimit
         hmm<-sum(fullresult$counts[direction,use])
         if (direction==2) 
           g<-addG(g,dataText(data.frame(x=time,y=ylim[2]-diff(ylim)/20),hmm,hjust=0.5,vjust=1,colour="#ca0",size=0.75,fontface="bold"))

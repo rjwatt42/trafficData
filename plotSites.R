@@ -8,13 +8,13 @@ plotSites<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
   if (volume) {
     volumes<-matrix(0,2,9)
     for (site in 1:9) {
-      d<-data[[paste0("s",site)]]
       fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=input$whichTime,whichSite=site),data)
       switch(filter,
-             "green"={use<-rep(TRUE,length(fullresult$speeds))},
-             "purple"=use<-(fullresult$speeds>=(fullresult$speedLimit+10)),
-             "red"=use<-(fullresult$speeds>=(fullresult$speedLimit*1.1+2)),
-             "orange"=use<-(fullresult$speeds>=(fullresult$speedLimit))
+             "black"=use<-(fullresult$speeds>=speedLowerBand(fullresult$speedLimit,"black")),
+             "purple"=use<-(fullresult$speeds>=speedLowerBand(fullresult$speedLimit,"purple")),
+             "red"=use<-(fullresult$speeds>=speedLowerBand(fullresult$speedLimit,"red")),
+             "orange"=use<-(fullresult$speeds>=speedLowerBand(fullresult$speedLimit,"orange")),
+             "green"=use<-(fullresult$speeds>=speedLowerBand(fullresult$speedLimit,"green"))
       )
       for (direction in 1:2) {
         volumes[direction,site]<-sum(fullresult$counts[direction,use])
@@ -86,13 +86,13 @@ plotSites<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
         g<-addG(g,dataPolygon(result,colour=NA,fill=col,alpha=fullresult$counts[direction,i-1]/100))
       }
       if (showNumbers) {
-        use<-fullresult$speeds>=(fullresult$speedLimit*1.1+2)
+        use<-fullresult$speeds>=speedLowerBand(fullresult$speedLimit,"red")
         hmm<-sum(fullresult$counts[direction,use])
         if (direction==2) 
           g<-addG(g,dataText(data.frame(x=site,y=ylim[2]),hmm,hjust=0.5,vjust=1,colour="#c00",fill="black",background=TRUE,size=0.75,fontface="bold"))
         else
           g<-addG(g,dataText(data.frame(x=site,y=ylim[1]),hmm,hjust=0.5,colour="#c00",fill="black",background=TRUE,size=0.75,fontface="bold"))
-        use<-fullresult$speeds<(fullresult$speedLimit*1.1+2) & fullresult$speeds>=fullresult$speedLimit
+        use<-fullresult$speeds<speedLowerBand(fullresult$speedLimit,"red") & fullresult$speeds>=fullresult$speedLimit
         hmm<-sum(fullresult$counts[direction,use])
         if (direction==2) 
           g<-addG(g,dataText(data.frame(x=site,y=ylim[2]-diff(ylim)/20),hmm,hjust=0.5,vjust=1,colour="#ca0",fill="black",background=TRUE,size=0.75,fontface="bold"))

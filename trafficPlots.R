@@ -1,6 +1,6 @@
 plotNumbers<-function(d,fullresult,item,g) {
-  mins<-c(0,fullresult$speedLimit,fullresult$speedLimit*1.1+2,fullresult$speedLimit+10)
-  maxs<-c(fullresult$speedLimit,fullresult$speedLimit*1.1+2,fullresult$speedLimit+10,100)
+  mins<-c(0,fullresult$speedLimit,fullresult$speedLimit*1.1+2,speedLowerBand(fullresult$speedLimit,"purple"))
+  maxs<-c(fullresult$speedLimit,fullresult$speedLimit*1.1+2,speedLowerBand(fullresult$speedLimit,"purple"),100)
   cols<-c("green","orange","red","purple")
   for (direction in 1:2) {
     sn<-(direction-1.5)
@@ -18,43 +18,17 @@ plotNumbers<-function(d,fullresult,item,g) {
 plotBars<-function(fullresult,volumes,item,filter,doPercent,g) {
   
   for (direction in 1:2) {
-    switch(filter,
-           "green"={use<-rep(TRUE,length(fullresult$speeds))},
-           "black"=use<-(fullresult$speeds>=(fullresult$speedLimit+20)),
-           "purple"=use<-(fullresult$speeds>=(fullresult$speedLimit+10)),
-           "red"=use<-(fullresult$speeds>=(fullresult$speedLimit*1.1+2)),
-           "orange"=use<-(fullresult$speeds>=(fullresult$speedLimit))
-    )
+    use1<-(fullresult$speeds>=speedLowerBand(fullresult$speedLimit,filter))
     ybase<-sign(direction-1.5)*c(0,1,1,0)
     if (doPercent)  ygain<-100/sum(fullresult$counts[direction,])
     else ygain<-1
-    volume1<-sum(fullresult$counts[direction,use])
-    v<-data.frame(y=ybase*ygain*volume1,x=c(0,0,1,1)+(item-0.5))
-    g<-addG(g,dataPolygon(v,fill="black",colour=NA))
-    if (filter!="black") {
-      use<-use & fullresult$speeds<(fullresult$speedLimit+20)
-      volume2<-sum(fullresult$counts[direction,use])
-      v<-data.frame(y=ybase*volume2*ygain,x=c(0,0,1,1)+(item-0.5))
-      g<-addG(g,dataPolygon(v,fill="purple",colour=NA))
-      if (filter!="purple") {
-        use<-use & fullresult$speeds<(fullresult$speedLimit+10)
-        volume2<-sum(fullresult$counts[direction,use])
-        v<-data.frame(y=ybase*volume2*ygain,x=c(0,0,1,1)+(item-0.5))
-        g<-addG(g,dataPolygon(v,fill="red",colour=NA))
-        if (filter!="red") {
-          use<-use & fullresult$speeds<(fullresult$speedLimit*1.1+2)
-          volume3<-sum(fullresult$counts[direction,use])
-          v<-data.frame(y=ybase*volume3*ygain,x=c(0,0,1,1)+(item-0.5))
-          g<-addG(g,dataPolygon(v,fill="orange",colour=NA))
-        if (filter!="orange") {
-            use<-use & fullresult$speeds<fullresult$speedLimit
-            volume4<-sum(fullresult$counts[direction,use])
-            v<-data.frame(y=ybase*volume4*ygain,x=c(0,0,1,1)+(item-0.5))
-            g<-addG(g,dataPolygon(v,fill="green",colour=NA))
-        }
-        }
-      }
-      }
+    for (band in c("black","purple","red","orange","green")) {
+      use<-use1 & fullresult$speeds<=speedUpperBand(fullresult$speedLimit,band)
+      volume<-sum(fullresult$counts[direction,use])
+      v<-data.frame(y=ybase*volume*ygain,x=c(0,0,1,1)+(item-0.5))
+      g<-addG(g,dataPolygon(v,fill=band,colour=NA))
+      if (band==filter) break
     }
+  }
   return(g)
 }
