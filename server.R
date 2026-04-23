@@ -84,9 +84,10 @@ server <- function(input, output) {
              }
              )
 
+      g4<-'<img src="www/map.png">'
       g<-generate_tab("Graphs: ",titleWidth=50,
-                      tabs=c("Traffic Speed","Traffic Volume","Data"),
-                      tabContents=c(g1,g2,g3),
+                      tabs=c("Traffic Speed","Traffic Volume","Data","Map"),
+                      tabContents=c(g1,g2,g3,g4),
                       open=openTab
                       ) 
     output$trafficHTML <- renderUI(HTML(g))
