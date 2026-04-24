@@ -45,7 +45,7 @@ server <- function(input, output) {
       # saveRDS(maintrafficdata,"./maintrafficdata.rds")
     # } else {
       url1<-"https://github.com/rjwatt42/trafficData/raw/refs/heads/main/maintrafficdata.rds"
-      filename <- tempfile(fileext=".xlsx")
+      filename <- tempfile(fileext=".rds")
       download.file(url1, filename, mode="wb")
       maintrafficdata<<-readRDS(filename)
     # }

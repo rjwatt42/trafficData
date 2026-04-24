@@ -31,7 +31,7 @@ plotSites<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
       )
     } else  {
       if (doPercent) {ylim<-c(-1,1)*100;ylabel<-"Percent"}
-      else           {ylim<-c(-1,1)*max(100,max(volumes,na.rm=TRUE));ylabel<-"Volume"}
+      else           {ylim<-c(-1,1)*max(100,max(volumes,na.rm=TRUE)*1.05);ylabel<-"Volume"}
       g<-startPlot(xlim=xlim,
                    ylim=ylim,
                    xlabel="Site",xticks=1:9,

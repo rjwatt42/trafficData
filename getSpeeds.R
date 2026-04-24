@@ -2,16 +2,35 @@ getSpeeds<-function(input,data) {
   
   if (is.null(input)) input<-list(whichDay="Monday",whichTime=" 9.00",whichSite=1)
   
-  if (input$whichDay=="all days") day<-1:7
-  else day<-which(input$whichDay==c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"))
-  if (input$whichTime=="all times") time<-0:23
-  else time<-as.numeric(input$whichTime)
+  if (is.character(input$whichDay))
+    switch(input$whichDay,
+           "all days"=day<-1:7,
+           "week days"=day<-1:5,
+           "weekend"=day<-6:7,
+           day<-which(input$whichDay==c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"))
+    )
+  else day<-input$whichDay
   
-  site<-NULL
-  if (input$whichSite=="all") site<-1:9
-  if (input$whichSite=="all20") site<-3:6
-  if (input$whichSite=="all30") site<-c(1:2,7:9)
-  if (is.null(site)) site<-as.numeric(input$whichSite)
+  if (is.character(input$whichTime))
+    switch(input$whichTime,
+         "all times"=time<-(0:23),
+         "school"=time<-c(8,15),
+         "before school"=time<-c(0:7),
+         "between school"=time<-c(9:14),
+         time<-as.numeric(input$whichTime)
+    )
+  else time<-input$whichTime
+  
+  if (is.character(input$whichSite))
+    switch(input$whichSite,
+           "all"=site<-1:9,
+           "all20"=site<-4:6,
+           "all30"=site<-c(1:3,7:9),
+           site<-as.numeric(input$whichSite)
+    )
+  else
+    site=input$whichSite
+  
   
   allspeeds<-matrix(seq(5,60,5),1)
   allspeeds[1]<-0
@@ -47,7 +66,9 @@ getSpeeds<-function(input,data) {
     }
     counts<-cbind(counts,allcounts)
     speeds<-cbind(speeds,allspeeds)
-    speedLimits<-cbind(speedLimits,matrix(d$speedLimit,1,length(allspeeds)))
+    if (input$whichLimit=="auto")
+      speedLimits<-cbind(speedLimits,matrix(d$speedLimit,1,length(allspeeds)))
+    else speedLimits<-cbind(speedLimits,matrix(as.numeric(input$whichLimit),1,length(allspeeds)))
     # speeds<-allspeeds
     # speedLimits<-rep(d$speedLimit,length(allspeeds))
   }

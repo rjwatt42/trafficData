@@ -62,7 +62,7 @@ ui <- fluidPage(
                              ),
                              tags$tr(
                                tags$td(width = "60%", tags$div(style=localStyle,'day:')),
-                               tags$td(width = "40%", selectInput("whichDay", NULL,c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday","all days"),selected = "Monday",selectize=FALSE))
+                               tags$td(width = "40%", selectInput("whichDay", NULL,c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday","all days","week days","weekend"),selected = "Monday",selectize=FALSE))
                              ),
                              # tags$tr(
                              #   tags$td(width = "70%", tags$div(style=localStyle,'direction:')),
@@ -70,7 +70,7 @@ ui <- fluidPage(
                              # ),
                              tags$tr(
                                tags$td(width = "60%", tags$div(style=localStyle,'time:')),
-                               tags$td(width = "40%", selectInput("whichTime", NULL,c(paste0(format(0:23),".00"),"all times"),selected = " 9.00",selectize=FALSE))
+                               tags$td(width = "40%", selectInput("whichTime", NULL,c(paste0(format(0:23),".00"),"all times","school","before school","between school"),selected = " 9.00",selectize=FALSE))
                              ),
                              tags$tr(
                                tags$td(width = "60%", tags$div(style=localStyle,'speed limit:')),
