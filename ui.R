@@ -71,6 +71,10 @@ ui <- fluidPage(
                              tags$tr(
                                tags$td(width = "60%", tags$div(style=localStyle,'time:')),
                                tags$td(width = "40%", selectInput("whichTime", NULL,c(paste0(format(0:23),".00"),"all times"),selected = " 9.00",selectize=FALSE))
+                             ),
+                             tags$tr(
+                               tags$td(width = "60%", tags$div(style=localStyle,'speed limit:')),
+                               tags$td(width = "40%", selectInput("whichLimit", NULL,c("auto","20","30"),selected = "auto",selectize=FALSE))
                              )
                   )
         ),

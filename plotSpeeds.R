@@ -39,17 +39,16 @@ plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showN
     
       fullresult<-getSpeeds(input,data)
       if (showNumbers) {
-        mins<-c(0,fullresult$speedLimit,fullresult$speedLimit*1.1+2)
-        maxs<-c(fullresult$speedLimit,fullresult$speedLimit*1.1+2,100)
-        cols<-c("green","orange","red","purple")
+        bands<-c("green","orange","red","purple","black")
         for (direction in 1:2) {
           sn<-(direction-1.5)
           v<-sum(fullresult$counts[direction,])
-          g<-addG(g,dataText(data.frame(x=site,y=6*sn),label=format(v,digits=1),colour="white",hjust=0.5,vjust=0.5))
-          for (i in 1:4) {
-            use<-fullresult$speeds>=mins[i] & fullresult$speeds<maxs[i]
+          g<-addG(g,dataText(data.frame(x=site,y=6*sn),label=paste0("total=",format(v,digits=1)),colour="white",hjust=0.5,vjust=0.5))
+          for (i in 1:5) {
+            use<-fullresult$speeds>=speedLowerBand(fullresult$speedLimit,bands[i]) & 
+                 fullresult$speeds<speedUpperBand(fullresult$speedLimit,bands[i]) 
             v<-sum(fullresult$counts[direction,use])
-            g<-addG(g,dataText(data.frame(x=site,y=i*sn),label=format(v,digits=1),colour=cols[i],hjust=0.5,vjust=0.5))
+            g<-addG(g,dataText(data.frame(x=site,y=i*sn),label=format(v,digits=1),colour=speedFill(bands[i]),hjust=0.5,vjust=0.5))
           }
         }
       } else {
@@ -131,21 +130,21 @@ plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showN
       use<-result$x>speeds[i-1] & result$x<=speeds[i]
       x<-c(result$x[i],result$x[i],result$x[i+1],result$x[i+1])
       y<-c(0,sum(result$y[use]),sum(result$y[use]),0)
-      fill<-"black"
-      if (speeds[i]<speedUpperBand(sL1,"purple")) fill<-"purple"
-      if (speeds[i]<speedUpperBand(sL1,"red")) fill<-"red"
-      if (speeds[i]<speedUpperBand(sL1,"orange")) fill<-"orange"
-      if (speeds[i]<speedUpperBand(sL1,"green")) fill<-"green"
+      fill<-speedFill("black")
+      if (speeds[i]<speedUpperBand(sL1,"purple")) fill<-speedFill("purple")
+      if (speeds[i]<speedUpperBand(sL1,"red")) fill<-speedFill("red")
+      if (speeds[i]<speedUpperBand(sL1,"orange")) fill<-speedFill("orange")
+      if (speeds[i]<speedUpperBand(sL1,"green")) fill<-speedFill("green")
       g<-addG(g,dataPolygon(data.frame(x=x,y=y),colour="none",fill=fill))
       
       use<-result$x>speeds[i-1] & result$x<=speeds[i] & fullresult$speedLimit==sL2
       x<-c(result$x[i],result$x[i],result$x[i+1],result$x[i+1])
       y<-c(0,sum(result$y[use]),sum(result$y[use]),0)
-      fill<-"black"
-      if (speeds[i]<speedUpperBand(sL2,"purple")) fill<-"purple"
-      if (speeds[i]<speedUpperBand(sL2,"red")) fill<-"red"
-      if (speeds[i]<speedUpperBand(sL2,"orange")) fill<-"orange"
-      if (speeds[i]<speedUpperBand(sL2,"green")) fill<-"green"
+      fill<-speedFill("black")
+      if (speeds[i]<speedUpperBand(sL2,"purple")) fill<-speedFill("purple")
+      if (speeds[i]<speedUpperBand(sL2,"red")) fill<-speedFill("red")
+      if (speeds[i]<speedUpperBand(sL2,"orange")) fill<-speedFill("orange")
+      if (speeds[i]<speedUpperBand(sL2,"green")) fill<-speedFill("green")
       g<-addG(g,dataPolygon(data.frame(x=x,y=y),colour="none",fill=fill))
     }
   }

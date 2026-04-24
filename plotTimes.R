@@ -50,7 +50,7 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
     for (time in 0:23) {
       fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time,whichSite=input$whichSite),data)
       if (showNumbers) {
-        g<-plotNumbers(d,fullresult,time,g)
+        g<-plotNumbers(d,fullresult,time,doPercent=doPercent,size=0.4,g=g)
       } else {
         g<-plotBars(fullresult,volumes,time+1,filter,doPercent=doPercent,g)
       }
@@ -80,15 +80,12 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
                            x=time+c(-0.5,0.5,0.5,-0.5)
         )
         if (direction==1) result$y<- - result$y
-        if (fullresult$speeds[i-1]<fullresult$speedLimit[i-1]) col<-"green"
-        else {
-          if (fullresult$speeds[i-1]<fullresult$speedLimit[i-1]*1.1+2) col<-"orange"
-          else {
-            if (fullresult$speeds[i-1]<fullresult$speedLimit[i-1]+10) col<-"red"
-            else col<-"purple"
-          }
-        }
-        g<-addG(g,dataPolygon(result,colour=NA,fill=col,alpha=fullresult$counts[direction,i-1]/100))
+        fill<-speedFill("black")
+        if (fullresult$speeds[i-1]<speedUpperBand(fullresult$speedLimit[i-1],"purple")) fill<-speedFill("purple")
+        if (fullresult$speeds[i-1]<speedUpperBand(fullresult$speedLimit[i-1],"red")) fill<-speedFill("red")
+        if (fullresult$speeds[i-1]<speedUpperBand(fullresult$speedLimit[i-1],"orange")) fill<-speedFill("orange")
+        if (fullresult$speeds[i-1]<speedUpperBand(fullresult$speedLimit[i-1],"green")) fill<-speedFill("green")
+        g<-addG(g,dataPolygon(result,colour=NA,fill=fill,alpha=fullresult$counts[direction,i-1]/100))
       }
       meanSpeed<-sum(fullresult$speeds*fullresult$counts[direction,])/sum(fullresult$counts[direction,])
       means[direction,time+1]<-meanSpeed

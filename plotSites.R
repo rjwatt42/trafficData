@@ -31,7 +31,7 @@ plotSites<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
       )
     } else  {
       if (doPercent) {ylim<-c(-1,1)*100;ylabel<-"Percent"}
-      else           {ylim<-c(-1,1)*max(500,max(volumes,na.rm=TRUE));ylabel<-"Volume"}
+      else           {ylim<-c(-1,1)*max(100,max(volumes,na.rm=TRUE));ylabel<-"Volume"}
       g<-startPlot(xlim=xlim,
                    ylim=ylim,
                    xlabel="Site",xticks=1:9,
@@ -42,10 +42,9 @@ plotSites<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
     g<-addG(g,plotTitle(title))
     
     for (site in 1:9) {
-      d<-data[[paste0("s",site)]]
       fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=input$whichTime,whichSite=site),data)
       if (showNumbers) {
-        g<-plotNumbers(d,fullresult,site,g)
+        g<-plotNumbers(d,fullresult,site,doPercent=doPercent,g=g)
       } else {
         g<-plotBars(fullresult,volumes,site,filter,doPercent=doPercent,g)
       }
@@ -75,15 +74,12 @@ plotSites<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
                            x=site+c(-0.5,0.5,0.5,-0.5)
         )
         if (direction==1) result$y<- - result$y
-        if (fullresult$speeds[i-1]<fullresult$speedLimit[i-1]) col<-"green"
-        else {
-          if (fullresult$speeds[i-1]<fullresult$speedLimit[i-1]*1.1+2) col<-"orange"
-          else {
-            if (fullresult$speeds[i-1]<fullresult$speedLimit[i-1]+10) col<-"red"
-            else col<-"purple"
-          }
-        }
-        g<-addG(g,dataPolygon(result,colour=NA,fill=col,alpha=fullresult$counts[direction,i-1]/100))
+        fill<-speedFill("black")
+        if (fullresult$speeds[i-1]<speedUpperBand(fullresult$speedLimit[i-1],"purple")) fill<-speedFill("purple")
+        if (fullresult$speeds[i-1]<speedUpperBand(fullresult$speedLimit[i-1],"red")) fill<-speedFill("red")
+        if (fullresult$speeds[i-1]<speedUpperBand(fullresult$speedLimit[i-1],"orange")) fill<-speedFill("orange")
+        if (fullresult$speeds[i-1]<speedUpperBand(fullresult$speedLimit[i-1],"green")) fill<-speedFill("green")
+        g<-addG(g,dataPolygon(result,colour=NA,fill=fill,alpha=fullresult$counts[direction,i-1]/100))
       }
       if (showNumbers) {
         use<-fullresult$speeds>=speedLowerBand(fullresult$speedLimit,"red")

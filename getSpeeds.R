@@ -1,5 +1,7 @@
 getSpeeds<-function(input,data) {
   
+  if (is.null(input)) input<-list(whichDay="Monday",whichTime=" 9.00",whichSite=1)
+  
   if (input$whichDay=="all days") day<-1:7
   else day<-which(input$whichDay==c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"))
   if (input$whichTime=="all times") time<-0:23
@@ -56,21 +58,32 @@ getSpeeds<-function(input,data) {
 
 speedUpperBand<-function(speedLimit,band) {
   switch(band,
-         "green"=use<-speedLimit,
          "black"=use<-speedLimit+50,
-         "purple"=use<-speedLimit+20,
+         "purple"=use<-speedLimit+15,
          "red"=use<-speedLimit+10,
-         "orange"=use<-speedLimit*1.1+2
+         "orange"=use<-speedLimit*1.1+2,
+         "green"=use<-speedLimit
   )
   return(use)
 }
 speedLowerBand<-function(speedLimit,band) {
   switch(band,
-         "green"=use<-0,
-         "black"=use<-speedLimit+20,
+         "black"=use<-speedLimit+15,
          "purple"=use<-speedLimit+10,
          "red"=use<-speedLimit*1.1+2,
-         "orange"=use<-speedLimit
+         "orange"=use<-speedLimit,
+         "green"=use<-0
+  )
+  return(use)
+}
+
+speedFill<-function(band) {
+  switch(band,
+         "black"=use<-"magenta",
+         "purple"=use<-"purple",
+         "red"=use<-"red",
+         "orange"=use<-"orange",
+         "green"=use<-"green"
   )
   return(use)
 }

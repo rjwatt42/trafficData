@@ -52,7 +52,7 @@ server <- function(input, output) {
   }
   
   
-  observeEvent({c(input$whichSite,input$whichDay,input$whichTime,
+  observeEvent({c(input$whichSite,input$whichDay,input$whichTime,input$whichLimit,
                   input$plotType,input$filter,input$percent)}, 
     {
       if (input$plotType=="f(sites)") shinyjs::disable("whichSite")
@@ -71,17 +71,17 @@ server <- function(input, output) {
              "f(sites)" ={
                g1<-plotSites(input,maintrafficdata)
                g2<-plotSites(input,maintrafficdata,volume=TRUE,filter=input$filter,doPercent=(input$percent=="percents"))
-               g3<-plotSites(input,maintrafficdata,volume=TRUE,showNumbers=TRUE)
+               g3<-plotSites(input,maintrafficdata,volume=TRUE,showNumbers=TRUE,doPercent=(input$percent=="percents"))
              },
              "f(days)"  ={
                g1<-plotDays(input,maintrafficdata)
                g2<-plotDays(input,maintrafficdata,volume=TRUE,filter=input$filter,doPercent=(input$percent=="percents"))
-               g3<-plotDays(input,maintrafficdata,volume=TRUE,showNumbers=TRUE)
+               g3<-plotDays(input,maintrafficdata,volume=TRUE,showNumbers=TRUE,doPercent=(input$percent=="percents"))
              },
              "f(times)" ={
                g1<-plotTimes(input,maintrafficdata)
                g2<-plotTimes(input,maintrafficdata,volume=TRUE,filter=input$filter,doPercent=(input$percent=="percents"))
-               g3<-g2 #plotTimes(input,maintrafficdata,volume=TRUE,showNumbers=TRUE)
+               g3<-plotTimes(input,maintrafficdata,volume=TRUE,showNumbers=TRUE,doPercent=(input$percent=="percents"))
              }
              )
 
