@@ -8,7 +8,7 @@ plotSites<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
   if (volume) {
     volumes<-matrix(0,2,9)
     for (site in 1:9) {
-      fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=input$whichTime,whichSite=site),data)
+      fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=input$whichTime,whichSite=site,whichLimit=input$whichLimit),data)
       switch(filter,
              "black"=use<-(fullresult$speeds>=speedLowerBand(fullresult$speedLimit,"black")),
              "purple"=use<-(fullresult$speeds>=speedLowerBand(fullresult$speedLimit,"purple")),
@@ -31,7 +31,7 @@ plotSites<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
       )
     } else  {
       if (doPercent) {ylim<-c(-1,1)*100;ylabel<-"Percent"}
-      else           {ylim<-c(-1,1)*max(100,max(volumes,na.rm=TRUE)*1.05);ylabel<-"Volume"}
+      else           {ylim<-c(-1,1)*max(100,max(volumes,na.rm=TRUE)*1.1);ylabel<-"Volume"}
       g<-startPlot(xlim=xlim,
                    ylim=ylim,
                    xlabel="Site",xticks=1:9,
@@ -42,17 +42,17 @@ plotSites<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
     g<-addG(g,plotTitle(title))
     
     for (site in 1:9) {
-      fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=input$whichTime,whichSite=site),data)
+      fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=input$whichTime,whichSite=site,whichLimit=input$whichLimit),data)
       if (showNumbers) {
         g<-plotNumbers(d,fullresult,site,doPercent=doPercent,g=g)
       } else {
         g<-plotBars(fullresult,volumes,site,filter,doPercent=doPercent,g)
       }
     }
-    g<-addG(g,dataLine(data.frame(x=xlim,y=c(0,0)),colour="grey"))
+    g<-addG(g,dataLine(data.frame(x=xlim,y=c(0,0)),colour="black",linewidth=1))
     
-    g<-addG(g,dataText(data.frame(x=max(xlim),y=max(ylim)*0.8),label="← Westwards ←",hjust = 1,vjust=1))
-    g<-addG(g,dataText(data.frame(x=min(xlim),y=min(ylim)*0.8),label="→ Eastwards →",hjust = 0,vjust=0))
+    g<-addG(g,dataText(data.frame(x=max(xlim),y=max(ylim)-diff(ylim)*0.01),label="← Westwards ←",hjust = 1,vjust=1))
+    g<-addG(g,dataText(data.frame(x=min(xlim),y=min(ylim)+diff(ylim)*0.01),label="→ Eastwards →",hjust = 0,vjust=0))
     return(g)
   } 
   ylim<-c(-1,1)*75
@@ -67,7 +67,7 @@ plotSites<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
   
   for (site in 1:9) {
     d<-data[[paste0("s",site)]]
-    fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=input$whichTime,whichSite=site),data)
+    fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=input$whichTime,whichSite=site,whichLimit=input$whichLimit),data)
     for (direction in 1:2) {
       for (i in 2:length(fullresult$speeds)) {
         result<-data.frame(y=c(0,0,1,1)*fullresult$speeds[i-1]+c(1,1,0,0)*fullresult$speeds[i],
@@ -98,9 +98,9 @@ plotSites<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
     }
   }
   
-  g<-addG(g,dataLine(data.frame(x=xlim,y=c(0,0)),colour="grey",linewidth=1.5))
+  g<-addG(g,dataLine(data.frame(x=xlim,y=c(0,0)),colour="black",linewidth=1.5))
   
-  g<-addG(g,dataText(data.frame(x=max(xlim),y=max(ylim)*0.8),label="← Westwards ←",hjust = 1,vjust=1))
-  g<-addG(g,dataText(data.frame(x=min(xlim),y=min(ylim)*0.8),label="→ Eastwards →",hjust = 0,vjust=0))
+  g<-addG(g,dataText(data.frame(x=max(xlim),y=max(ylim)-diff(ylim)*0.01),label="← Westwards ←",hjust = 1,vjust=1))
+  g<-addG(g,dataText(data.frame(x=min(xlim),y=min(ylim)+diff(ylim)*0.01),label="→ Eastwards →",hjust = 0,vjust=0))
   return(g)
 }

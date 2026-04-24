@@ -74,7 +74,7 @@ ui <- fluidPage(
                              ),
                              tags$tr(
                                tags$td(width = "60%", tags$div(style=localStyle,'speed limit:')),
-                               tags$td(width = "40%", selectInput("whichLimit", NULL,c("auto","20","30"),selected = "auto",selectize=FALSE))
+                               tags$td(width = "40%", selectInput("whichLimit", NULL,c("auto","20","25","30"),selected = "auto",selectize=FALSE))
                              )
                   )
         ),

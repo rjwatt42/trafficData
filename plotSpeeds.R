@@ -27,7 +27,7 @@ plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showN
                    box="x",top=1
       )
     } else {
-      ylim<-c(-1,1)*max(500,max(volumes,na.rm=TRUE))
+      ylim<-c(-1,1)*max(100,max(volumes,na.rm=TRUE)*1.1)
       g<-startPlot(xlim=xlim,
                    ylim=ylim,
                    xlabel="Site",xticks=list(breaks=1,labels=input$whichSite,logScale=FALSE),
@@ -89,10 +89,10 @@ plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showN
           }
         }
       }
-    g<-addG(g,dataLine(data.frame(x=xlim,y=c(0,0)),colour="grey"))
+    g<-addG(g,dataLine(data.frame(x=xlim,y=c(0,0)),colour="black",linewidth=1))
     
-    g<-addG(g,dataText(data.frame(x=max(xlim),y=max(ylim)*0.8),label="← Westwards ←",hjust = 1,vjust=1))
-    g<-addG(g,dataText(data.frame(x=min(xlim),y=min(ylim)*0.8),label="→ Eastwards →",hjust = 0,vjust=0))
+    g<-addG(g,dataText(data.frame(x=max(xlim),y=max(ylim)-diff(ylim)*0.01),label="← Westwards ←",hjust = 1,vjust=1))
+    g<-addG(g,dataText(data.frame(x=min(xlim),y=min(ylim)+diff(ylim)*0.01),label="→ Eastwards →",hjust = 0,vjust=0))
     return(g)
   } 
 
@@ -149,9 +149,9 @@ plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showN
     }
   }
   
-  g<-addG(g,dataLine(data.frame(x=xlim,y=c(0,0)),colour="grey",linewidth=1.5))
+  g<-addG(g,dataLine(data.frame(x=xlim,y=c(0,0)),colour="black",linewidth=1.5))
   
-  g<-addG(g,dataText(data.frame(x=max(xlim),y=max(ylim)*0.6),label="← Westwards ←",hjust = 1,vjust=1))
-  g<-addG(g,dataText(data.frame(x=max(xlim),y=min(ylim)*0.6),label="→ Eastwards →",hjust = 1,vjust=0))
+  g<-addG(g,dataText(data.frame(x=max(xlim),y=max(ylim)-diff(ylim)*0.01),label="← Westwards ←",hjust = 1,vjust=1))
+  g<-addG(g,dataText(data.frame(x=min(xlim),y=min(ylim)+diff(ylim)*0.01),label="→ Eastwards →",hjust = 0,vjust=0))
   return(g)
 }
