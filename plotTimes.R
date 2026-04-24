@@ -11,9 +11,8 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
   
   if (volume) {
     volumes<-matrix(0,2,24)
-    for (site in sites){
     for (time in 0:23) {
-      fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time,whichSite=site,whichLimit=input$whichLimit),data)
+      fullresult<-getSpeeds(list(whichDay=input$whichDay,whichTime=time,whichSite=sites,whichLimit=input$whichLimit),data)
       switch(filter,
              "black"=use<-(fullresult$speeds>=speedLowerBand(fullresult$speedLimit,"black")),
              "purple"=use<-(fullresult$speeds>=speedLowerBand(fullresult$speedLimit,"purple")),
@@ -25,19 +24,22 @@ plotTimes<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
         volumes[direction,time+1]<-volumes[direction,time+1]+sum(fullresult$counts[direction,use])
       }
     }
-    }
 
     if (showNumbers) {
       ylim<-c(-5,5)
       g<-startPlot(xlim=xlim,
                    ylim=ylim,
                    xlabel="Time of Day",xticks=list(breaks=seq(0,25,4),labels=paste0(seq(0,25,4),":00"),logScale=FALSE),
-                   ylabel="Volume",yticks=list(breaks=0,labels=" ",logScale=FALSE),
+                   ylabel="vehicles per hour",yticks=list(breaks=0,labels=" ",logScale=FALSE),
                    box="x",top=1
       )
     } else  {
       if (doPercent) {ylim<-c(-1,1)*100;ylabel<-"Percent"}
-      else           {ylim<-c(-1,1)*max(100,max(volumes,na.rm=TRUE)*1.1);ylabel<-"Volume"}
+      else           { 
+        if (filter=="purple") ylim<-c(-1,1)*max(25,max(volumes,na.rm=TRUE)*1.1)
+        else ylim<-c(-1,1)*max(100,max(volumes,na.rm=TRUE)*1.1)
+        ylabel<-"vehicles per hour"
+      }
       g<-startPlot(xlim=xlim,
                    ylim=ylim,
                    xlabel="Time of Day",xticks=list(breaks=seq(0,25,4),labels=paste0(seq(0,25,4),":00"),logScale=FALSE),

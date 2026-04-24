@@ -1,6 +1,6 @@
 getSpeeds<-function(input,data) {
   
-  if (is.null(input)) input<-list(whichDay="Monday",whichTime=" 9.00",whichSite=1)
+  if (is.null(input)) input<-list(whichDay="all days",whichTime="all times",whichSite="all",whichLimit="auto")
   
   if (is.character(input$whichDay))
     switch(input$whichDay,
@@ -73,7 +73,7 @@ getSpeeds<-function(input,data) {
     # speedLimits<-rep(d$speedLimit,length(allspeeds))
   }
   
-  return(list(speeds=speeds[1,],counts=counts,speedLimit=speedLimits[1,]))
+  return(list(speeds=speeds[1,],counts=counts/length(site),speedLimit=speedLimits[1,]))
 }
 
 

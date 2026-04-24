@@ -23,7 +23,7 @@ plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showN
       g<-startPlot(xlim=xlim,
                    ylim=ylim,
                    xlabel="Site",xticks=list(breaks=1,labels=input$whichSite,logScale=FALSE),
-                   ylabel="Volume",yticks=list(breaks=0,labels=" ",logScale=FALSE),
+                   ylabel="vehicles per hour",yticks=list(breaks=0,labels=" ",logScale=FALSE),
                    box="x",top=1
       )
     } else {
@@ -31,7 +31,7 @@ plotSpeeds<-function(input,data,fixedLimits=NA,filter="green",volume=FALSE,showN
       g<-startPlot(xlim=xlim,
                    ylim=ylim,
                    xlabel="Site",xticks=list(breaks=1,labels=input$whichSite,logScale=FALSE),
-                   ylabel="Volume",yticks=list(breaks=NULL,labels=NULL,logScale=FALSE),
+                   ylabel="vehicles per hour",yticks=list(breaks=NULL,labels=NULL,logScale=FALSE),
                    top=1
       )
     }

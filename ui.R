@@ -82,7 +82,7 @@ ui <- fluidPage(
                   tags$table(width="100%",
                              tags$tr(
                                tags$td(width = "60%", tags$div(style=localStyle,'graph type:')),
-                               tags$td(width = "40%", selectInput("plotType", NULL,c("single","f(sites)","f(days)","f(times)"), selected="single",selectize=FALSE))
+                               tags$td(width = "40%", selectInput("plotType", NULL,c("single","f(sites)","f(days)","f(times)","f(times,sites)"), selected="single",selectize=FALSE))
                              ),
                              tags$tr(
                                tags$td(width = "60%", tags$div(style=localStyle,'filter:')),

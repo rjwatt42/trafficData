@@ -26,12 +26,16 @@ plotSites<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showN
       g<-startPlot(xlim=xlim,
                    ylim=ylim,
                    xlabel="Site",xticks=1:9,
-                   ylabel="Volume",yticks=list(breaks=0,labels=" ",logScale=FALSE),
+                   ylabel="vehicles per hour",yticks=list(breaks=0,labels=" ",logScale=FALSE),
                    box="x",top=1
       )
     } else  {
       if (doPercent) {ylim<-c(-1,1)*100;ylabel<-"Percent"}
-      else           {ylim<-c(-1,1)*max(100,max(volumes,na.rm=TRUE)*1.1);ylabel<-"Volume"}
+      else           {
+        if (filter=="purple") ylim<-c(-1,1)*max(25,max(volumes,na.rm=TRUE)*1.1)
+        else ylim<-c(-1,1)*max(100,max(volumes,na.rm=TRUE)*1.1)
+        ylabel<-"vehicles per hour"
+      }
       g<-startPlot(xlim=xlim,
                    ylim=ylim,
                    xlabel="Site",xticks=1:9,

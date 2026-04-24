@@ -21,17 +21,22 @@ plotDays<-function(input,data,volume=FALSE,filter="green",doPercent=FALSE,showNu
         volumes[direction,day]<-sum(fullresult$counts[direction,use])
       }
     }
+    
     if (showNumbers) {
       ylim<-c(-5,5)
       g<-startPlot(xlim=xlim,
                    ylim=ylim,
                    xlabel="Day",xticks=list(breaks=1:7,labels=c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"),logScale=FALSE),
-                   ylabel="Volume",yticks=list(breaks=0,labels=" ",logScale=FALSE),
+                   ylabel="vehicles per hour",yticks=list(breaks=0,labels=" ",logScale=FALSE),
                    box="x",top=1
       )
     } else  {
       if (doPercent) {ylim<-c(-1,1)*100;ylabel<-"Percent"}
-      else           {ylim<-c(-1,1)*max(100,max(volumes,na.rm=TRUE)*1.1);ylabel<-"Volume"}
+      else           {
+        if (filter=="purple") ylim<-c(-1,1)*max(25,max(volumes,na.rm=TRUE)*1.1)
+        else ylim<-c(-1,1)*max(100,max(volumes,na.rm=TRUE)*1.1)
+        ylabel<-"vehicles per hour"
+        }
       g<-startPlot(xlim=xlim,
                    ylim=ylim,
                    xlabel="Day",xticks=list(breaks=1:7,labels=c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"),logScale=FALSE),
