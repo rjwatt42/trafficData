@@ -1,4 +1,4 @@
-plotSitesTimes<-function(input,data,filter="green",direction=2) {
+plotSitesTimes<-function(input,data,filter="green",doPercent=TRUE,direction=2) {
   
   azimuth<-45
   elevation<-40
@@ -20,18 +20,26 @@ plotSitesTimes<-function(input,data,filter="green",direction=2) {
              "orange"=use<-(fullresult$speeds>=speedLowerBand(fullresult$speedLimit,"orange")),
              "green"=use<-(fullresult$speeds>=speedLowerBand(fullresult$speedLimit,"green"))
       )
-      if (length(direction)==1)
-        volumes[site,time+1]<-volumes[site,time+1]+sum(fullresult$counts[direction,use])
-      else
-        volumes[site,time+1]<-volumes[site,time+1]+sum(fullresult$counts[1,use])+sum(fullresult$counts[2,use])
+      if (length(direction)==1) {
+        if (doPercent) 
+              volumes[site,time+1]<-sum(fullresult$counts[direction,use])/sum(fullresult$counts[direction,])*100
+        else  volumes[site,time+1]<-sum(fullresult$counts[direction,use])
+      }
+      else {
+        if (doPercent) 
+              volumes[site,time+1]<-(sum(fullresult$counts[direction,use])+sum(fullresult$counts[2,use]))/sum(fullresult$counts)*100
+        else  volumes[site,time+1]<-sum(fullresult$counts[1,use])+sum(fullresult$counts[2,use])
+      }
     }
   }
   
   if (filter=="purple") zlim<-c(0,1)*max(25,max(volumes,na.rm=TRUE)*1.1*2)
   else zlim<-c(0,1)*max(100,max(volumes,na.rm=TRUE)*1.1*2)
+  if (doPercent) zlim<-c(0,110)
   zticks<-axisTicks(zlim,FALSE,NULL,5)
   
-  zlabel<-"vehicles per hour"
+  if (doPercent) zlabel<-"%vehicles"
+  else zlabel<-"vehicles per hour"
   
   ylabel<-"site"
   ylim<-c(0,10)
@@ -73,6 +81,7 @@ plotSitesTimes<-function(input,data,filter="green",direction=2) {
         if (length(direction)==1)
               volume<-sum(fullresult$counts[direction,use&use1])
         else  volume<-sum(fullresult$counts[1,use&use1])+sum(fullresult$counts[2,use&use1])
+        if (doPercent) volume<-volume/sum(fullresult$counts[direction,])*100
       if (band=="black") {
         v<-c(v,volume,volume)
       }

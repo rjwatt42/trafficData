@@ -9,6 +9,7 @@ source('plotSites.R')
 source('plotDays.R')
 source('plotTimes.R')
 source('trafficPlots.R')
+source('plotSitesTimes.R')
 
 library('ggplot2')
 library('readxl')
@@ -84,7 +85,7 @@ server <- function(input, output) {
                g3<-plotTimes(input,maintrafficdata,volume=TRUE,showNumbers=TRUE,doPercent=(input$percent=="percents"))
              },
              "f(times,sites)"={
-               g1<-plotSitesTimes(input,maintrafficdata,filter=input$filter,direction=2)
+               g1<-plotSitesTimes(input,maintrafficdata,filter=input$filter,doPercent=(input$percent=="percents"),direction=2)
                g2<-g1
                g3<-g1
              }
