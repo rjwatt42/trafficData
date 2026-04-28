@@ -175,7 +175,7 @@ start3dPlot<-function(xlim,ylim,zlim,
     zx<-xlim[1]
     zy<-ylim[1]
     zyt<- -1
-    zxt<-0
+    zxt<-  0
     g<-addG(g,dataPath(rotate3D(data.frame(x=c(zx,zx),
                                              y=c(zy,zy),
                                              z=zlim),mapping),colour="#000000")
@@ -192,7 +192,9 @@ start3dPlot<-function(xlim,ylim,zlim,
       rotate.z=rotate3D(data.frame(x=c(zx,zx),
                                    y=c(zy,zy),
                                    z=zlim),mapping)
-      rotate.z<- 180-zyt*atan(diff(rotate.z$y)/diff(rotate.z$x))*57.296+zxt*atan(diff(rotate.z$y)/diff(rotate.z$x))*57.296
+      q1<-atan(diff(rotate.z$y)/diff(rotate.z$x))*57.296
+      q2<-atan(diff(rotate.z$y)/diff(rotate.z$x))*57.296
+      rotate.z<- 180-zyt*q1+zxt*q2
       g<-addG(g,dataText(data.frame(x=pos.z$x,y=pos.z$y),label=zlabel,angle=rotate.z,hjust=0.5,size=0.7,fontface="bold"))
     }
 

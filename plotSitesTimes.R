@@ -1,8 +1,8 @@
-plotSitesTimes<-function(input,data,filter="green",doPercent=TRUE,direction=2) {
+plotSitesTimes<-function(input,data,filter="green",doPercent=FALSE,direction=2) {
   
   azimuth<-45
   elevation<-40
-  distance<-100
+  distance<-1000000
   
   alpha<-1
 
